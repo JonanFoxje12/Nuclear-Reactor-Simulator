@@ -575,7 +575,9 @@
 
             function init() {
                 let gottenData = JSON.parse(localStorage.getItem("dataNRS"))
-                data = gottenData
+                if (gottenData !== null) {
+                    data = gottenData
+                }
 
                 mainloopID = setInterval(mainloop, 1000)
                 autoSaveID = setInterval(autoSave, 5000)
