@@ -214,36 +214,42 @@
             }
 
             function decreaseRods() {
-                data.rods -= 1
+                let dummyRods = data.rods - 1
+                data.rods = Math.max(dummyRods, 0)
                 rodsInput.value = data.rods
                 updateRods()
             }
 
             function increaseRods() {
-                data.rods += 1
+                let dummyRods = data.rods + 1
+                data.rods = Math.min(dummyRods, 100)
                 rodsInput.value = data.rods
                 updateRods()
             }
 
             function updateRods() {
+                data.rods = Number(rodsInput.value)
                 rodsShowO.textContent = data.rods
                 rodsShow.textContent = data.rods
                 rodsShowDIV.textContent = data.rods
             }
 
             function decreaseTurbines() {
-                data.turbines -= 1
+                let dummyTurbines = data.turbines - 1
+                data.turbines = Math.max(dummyTurbines, 0)
                 turbinesInput.value = data.turbines
                 updateTurbines()
             }
 
             function increaseTurbines() {
-                data.turbines += 1
+                let dummyTurbines = data.turbines + 1
+                data.turbines = Math.min(dummyTurbines, 100)
                 turbinesInput.value = data.turbines
                 updateTurbines()
             }
 
             function updateTurbines() {
+                data.turbines = Number(turbinesInput.value)
                 turbineShowO.textContent = data.turbines
                 turbineShow.textContent = data.turbines
                 turbineShowDIV.textContent = data.turbines
