@@ -12,5 +12,5 @@ Changelog started at 13-5-2026
 - Nothing here anymore...
 - If you have any ideas, post them as an issue!
 
-## Publishing (13<sup>th</sup> of May):
+## Publishing (May 13<sup>th</sup> 2026): creation
 - Repository was created and published.
