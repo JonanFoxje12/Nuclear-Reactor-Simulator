@@ -471,7 +471,6 @@
                 if (data.temperature >= 2000 || data.pressure >= 250) {
                     // meltdown
                     meltdownTriggered()
-                    alert("Oops, you let the reactor explode. There was a meltdown. Seems like you let the temperature or the pressure climb.")
                 }
 
                 console.log("Temp:", data.temperature, "Pressure:", data.pressure);
@@ -481,23 +480,12 @@
 
             function save() {
                 clearInterval(mainloopID)
-                localStorage.setItem("temperatureNRS", data.temperature);
-                localStorage.setItem("pressureNRS", data.pressure);
-                localStorage.setItem("rodsNRS", data.rods);
-                localStorage.setItem("turbinesNRS", data.turbines);
-                localStorage.setItem("turbineTemperature", data.turbineTemperature);
-                console.log("Saved.");
+                localStorage.setItem("dataNRS", JSON.stringify(data))
             }
 
             function autoSave() {
-                localStorage.setItem("temperatureNRS", data.temperature);
-                localStorage.setItem("pressureNRS", data.pressure);
-                localStorage.setItem("rodsNRS", data.rods);
-                localStorage.setItem("turbinesNRS", data.turbines);
-                localStorage.setItem("turbineTemperature", data.turbineTemperature);
-                localStorage.setItem("coinsNRS", data.coins);
-                localStorage.setItem("generatedPower", data.generated)
-                // console.log("Autosaved.");
+                localStorage.setItem("dataNRS", JSON.stringify(data))
+                console.log("Autosaved.");
             }
 
             function rebootMainloop() {
@@ -581,95 +569,13 @@
                 meltdown.className = "error"
                 clearInterval(mainloopID)
                 mainloopID = setInterval(mainloop, 1000)
+                alert("Oops, you let the reactor explode. There was a meltdown. Seems like you let the temperature or the pressure climb.")
                 alert("Close and reopen this tab.")
             }
 
             function init() {
-                let rodsDummy = JSON.parse(localStorage.getItem("rodsNRS"));
-                if (rodsDummy !== null) {
-                    data.rods = rodsDummy
-                    rodsInput.value = rodsDummy
-                    rodsShowO.textContent = rodsDummy
-                    rodsShow.textContent = rodsDummy
-                    rodsShowDIV.textContent = rodsDummy
-                } else {
-                    data.rods = 100    
-                }
-
-                let turbinesDummy = JSON.parse(localStorage.getItem("turbinesNRS"));
-                if (turbinesDummy !== null) {
-                    data.turbines = turbinesDummy
-                    turbinesInput.value = turbinesDummy
-                    turbineShowO.textContent = turbinesDummy
-                    turbineShow.textContent = turbinesDummy
-                    turbineShowDIV.textContent = turbinesDummy
-                } else {
-                    data.turbines = 0
-                }
-
-                let temperatureDummy = JSON.parse(localStorage.getItem("temperatureNRS"))
-                if (temperatureDummy !== null) {
-                    data.temperature = temperatureDummy
-                    temperatureShowO.textContent = temperatureDummy
-                    temperatureShow.textContent = temperatureDummy
-                } else {
-                    data.temperature = 20
-                }
-
-                let pressureDummy = JSON.parse(localStorage.getItem("pressureNRS"))
-                if (pressureDummy !== null) {
-                    data.pressure = pressureDummy
-                    pressureShowO.textContent = pressureDummy
-                    pressureShow.textContent = pressureDummy
-                } else {
-                    data.pressure = 0
-                }
-
-                let turbineTemperatureDummy = JSON.parse(localStorage.getItem("turbineTemperature"));
-                if (turbineTemperatureDummy !== null) {
-                    data.turbineTemperature = turbineTemperatureDummy
-                    turbineTemperatureShow.textContent = turbineTemperatureDummy
-                } else {
-                    data.turbineTemperature = 0
-                }
-
-                let ECSboughtDummy = JSON.parse(localStorage.getItem("ECSbought"));
-                if (ECSboughtDummy === true) {
-                    buyECSB.setAttribute("disabled", "disabled")
-                    activateECSB.removeAttribute("disabled")
-                    activateECSB.className = "bought"
-                    data.ECSAvailable = true
-                } else {
-                    data.ECSAvailable = false
-                }
-
-                let EPRSboughtDummy = JSON.parse(localStorage.getItem("EPRSbought"));
-                if (EPRSboughtDummy === true) {
-                    buyEPRSB.setAttribute("disabled", "disabled")
-                    activateEPRSB.removeAttribute("disabled")
-                    activateEPRSB.className = "bought"
-                    data.EPRSAvailable = true
-                } else {
-                    data.EPRSAvailable = false
-                }
-
-                let generatedDummy = JSON.parse(localStorage.getItem("generatedPower"));
-                if (generatedDummy === null) {
-                    localStorage.setItem("generatedPower", 0)
-                    data.generated = 0
-                } else {
-                    generatedShowO.textContent = generatedDummy
-                    data.generated = generatedDummy
-                }
-
-                let coinsDummy = JSON.parse(localStorage.getItem("coinsNRS"));
-                if (coinsDummy === null) {
-                    localStorage.setItem("coinsNRS", 0)
-                    data.coins = 0
-                } else {
-                    coinsShowO.textContent = coinsDummy
-                    data.coins = coinsDummy
-                }
+                let gottenData = JSON.parse(localStorage.getItem("dataNRS"))
+                data = gottenData
 
                 mainloopID = setInterval(mainloop, 1000)
                 autoSaveID = setInterval(autoSave, 5000)
