@@ -1,4 +1,4 @@
-# Nuclear Reactor Simulator
+# Nuclear Reactor Simulator Manual
 ## Controles
 There are several controles to control the reactor:
 ### Rods
