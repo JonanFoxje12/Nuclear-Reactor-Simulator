@@ -1,4 +1,5 @@
 # Nuclear Reactor Simulator Manual
+The game autosaves every 5 seconds.
 ## Controles
 There are several controles to control the reactor:
 ### Rods
@@ -43,7 +44,7 @@ Special: error has larger font than others when active and it triggers a nuclear
 What you should do: Immediatly shutdown the reactor<br>
 How to: rods to 0%, turbines to 100% and activate the emergency systems.
 ### MELTDOWN
-Reason: the reactor temperature climbed above 2000°C or the pressure climbed to above 250 bar.
-What you should do: refresh the page and re-begin playing the game, all your progress is gone.
+Reason: the reactor temperature climbed above 2000°C or the pressure climbed to above 250 bar. The reactor is gone.
+What you should do: close and reopen the page and re-begin playing the game, all your progress is gone.
 ## Coins
 Coins can be spend in the shop. They are obtained when power is generated.
