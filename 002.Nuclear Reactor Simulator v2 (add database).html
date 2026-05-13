@@ -1,0 +1,682 @@
+<link rel="icon" href="-NuclearPowerPlant.png">
+
+<html>
+    <head>
+        <title>Nuclear Reactor Simulator v2</title>
+        <style>
+            p {
+                line-height: 0.1;
+                display: inline-block;
+            }
+
+            .ib {
+                display: inline-block;
+            }
+
+            #rodsInput {
+                writing-mode: vertical-lr;
+            }
+
+            #turbinesInput {
+                writing-mode: vertical-lr;
+                direction: rtl;
+            }
+
+            .defaultLegend {
+                color: black;
+                font-size: 1em;
+            }
+
+            .onCooldown {
+                background-color: red;
+            }
+
+            .available {
+                cursor: pointer;
+            }
+
+            .notBought {
+                cursor: not-allowed;
+            }
+
+            .bought {
+                cursor: pointer;
+            }
+
+            .notBuyable {
+                cursor: not-allowed;
+            }
+
+            .buyable {
+                cursor: pointer;
+            }
+
+            .noError {
+                color: #fcd2d2;
+            }
+
+            .error {
+                color: red
+            }
+
+            #meltdownImminent.noError {
+                font-weight: normal;
+                font-size: medium;
+                color: #fcd2d2;
+            }
+
+            #meltdownImminent.error {
+                font-weight: bold;
+                font-size: 25px;
+                color: red
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Nuclear Reactor Simulator v2</h1>
+        <audio src="NuclearAlarmSiren.mp3" id="alarm"></audio>
+        <fieldset>
+            <legend>Overview</legend>
+            <p>Turbine power:&nbsp;</p><p id="turbineShowO">0</p><p>%</p><br>
+            <p>Generating power:&nbsp;</p><p id="generationShowO">0</p><p>&nbsp;MWh</p><br>
+            <p>Total generated power:&nbsp;</p><p id="generatedShowO">0</p><p>&nbsp;kW</p><br>
+            <p>Coins:&nbsp;</p><p id="coinsShowO">0</p><br>
+            <p>Rods:&nbsp;</p><p id="rodsShowO">100</p><p>% down</p><br>
+            <p>Reactor temperature:&nbsp;</p><p id="temperatureShowO">20</p><p>°C</p><br>
+            <p>Reactor pressure:&nbsp;</p><p id="pressureShowO">0</p><p>&nbsp;bar</p><br>
+        </fieldset>
+
+        <fieldset>
+            <legend>Rods & Turbines</legend>
+            <p>Rods:&nbsp;</p><p id="rodsShow">100</p><p>% down</p><br>
+            <p>Turbine power:&nbsp;</p><p id="turbineShow">0</p><p>%</p><br>
+            <p>Turbine temperature:&nbsp;</p><p id="turbineTemperatureShow">0</p><p>°C</p><br>
+            <p>Generating power:&nbsp;</p><p id="generationShow">0</p><p>&nbsp;MWh</p><br>
+            <div class="ib">
+                <p>Rods</p><br>
+                <input type="button" value="-" id="decreaseRodsB" onclick="decreaseRods()">
+                <input type="button" value="+" id="increaseRodsB" onclick="increaseRods()"><br>
+                <input type="range" id="rodsInput" min="0" max="100" value="100" onchange="updateRods()">
+                <br><p id="rodsShowDIV">100</p><p>%</p>
+            </div>
+            <div class="ib">
+                <p>Turbines</p><br>
+                <input type="button" value="-" id="decreaseTurbinesB" onclick="decreaseTurbines()">
+                <input type="button" value="+" id="increaseTurbinesB" onclick="increaseTurbines()"><br>
+                <input type="range" id="turbinesInput" min="0" max="100" value="0" onchange="updateTurbines()">
+                <br><p id="turbineShowDIV">0</p><p>%</p>
+            </div>
+        </fieldset>
+
+        <fieldset class="noError">
+            <legend class="defaultLegend">Error panel</legend>
+            <p id="overheat">OVERHEAT</p><br>
+            <p id="criticalOverheat">CRITICAL OVERHEAT</p><br>
+
+            <p id="overPressure">OVERPRESSURE</p><br>
+            <p id="criticalOverPressure">CRITICAL OVERPRESSURE</p><br>
+
+            <p id="turbineOverheat">TURBINE OVERHEAT</p><br>
+            <p id="turbineCritical">TURBINE CRITICAL</p><br>
+            <p id="turbineNotFunctional">TURBINE NOT FUNCTIONAL</p><br>
+            
+            <p id="meltdownImminent">!!!MELTDOWN IMMINENT!!!</p><br>
+
+            <p id="meltdown">MELTDOWN</p>
+        </fieldset>
+
+        <fieldset>
+            <legend>Reactor temperature</legend>
+            <p>Temperature:&nbsp;</p><p id="temperatureShow">20</p><p>°C</p><br>
+            <input type="button" value="Activate Emergency Cooling System" id="activateECSB" class="notBought" onclick="activateECS()" disabled><br>
+        </fieldset>
+
+        <fieldset>
+            <legend>Pressure</legend>
+            <p>Reactor pressure:&nbsp;</p><p id="pressureShow">0</p><p>&nbsp;bar</p><br>
+            <input type="button" value="Activate Emergency Pressure Relieve System" id="activateEPRSB" class="notBought" onclick="activateEPRS()" disabled><br>
+        </fieldset>
+
+        <fieldset>
+            <legend>Shop</legend>
+            <input type="button" value="Buy Emergency Cooling System for 200 coins" id="buyECSB" onclick="buyECS()"><br>
+            <input type="button" value="Buy Emergency Pressure Relieve System for 200 coins" id="buyEPRSB" onclick="buyEPRS()">
+        </fieldset>
+
+        <fieldset>
+            <legend>Other versions</legend>
+            <a href="001.Nuclear Reactor Simulator v1.html">Nuclear Reactor Simulator v1</a>
+        </fieldset>
+
+        <script>
+            const alarm = document.getElementById("alarm");
+
+            const overheat = document.getElementById("overheat");
+            const criticalOverheat = document.getElementById("criticalOverheat");
+            const overPressure = document.getElementById("overPressure");
+            const criticalOverPressure = document.getElementById("criticalOverPressure");
+            const turbineOverheat = document.getElementById("turbineOverheat");
+            const turbineCritical = document.getElementById("turbineCritical");
+            const turbineNotFunctional = document.getElementById("turbineNotFunctional");
+            const meltdownImminent  = document.getElementById("meltdownImminent");
+            const meltdown = document.getElementById("meltdown");
+
+            const turbineShowO = document.getElementById("turbineShowO");
+            const generationShowO = document.getElementById("generationShowO");
+            const generatedShowO = document.getElementById("generatedShowO");
+            const coinsShowO = document.getElementById("coinsShowO")
+            const rodsShowO = document.getElementById("rodsShowO");
+            const temperatureShowO = document.getElementById("temperatureShowO");
+            const pressureShowO = document.getElementById("pressureShowO");
+
+            const rodsInput = document.getElementById("rodsInput");
+            const decreaseRodsB = document.getElementById("decreaseRodsB");
+            const increaseRodsB = document.getElementById("increaseRodsB");
+            const rodsShow = document.getElementById("rodsShow");
+            const rodsShowDIV = document.getElementById("rodsShowDIV");
+
+            const turbinesInput = document.getElementById("turbinesInput");
+            const decreaseTurbinesB = document.getElementById("decreaseTurbinesB");
+            const increaseTurbinesB = document.getElementById("increaseTurbinesB");
+            const turbineShow = document.getElementById("turbineShow");
+            const turbineShowDIV = document.getElementById("turbineShowDIV");
+            const turbineTemperatureShow = document.getElementById("turbineTemperatureShow");
+            const generationShow = document.getElementById("generationShow");
+
+            const temperatureShow = document.getElementById("temperatureShow");
+
+            const pressureShow = document.getElementById("pressureShow");
+
+            const activateECSB = document.getElementById("activateECSB");                 // ECSB B=Button
+            const activateEPRSB = document.getElementById("activateEPRSB");
+
+            const buyECSB = document.getElementById("buyECSB");
+            const buyEPRSB = document.getElementById("buyEPRSB");
+
+            let mainloopID
+            let autoSaveID
+
+            let data = {
+                temperature: 20,
+                pressure: 0,
+                rods: 100,
+                turbines: 0,
+                turbineTemperature: 0,
+                coins: 0,
+                ECSAvailable: false,
+                EPRSAvailable: false,
+                generated: 0,
+            }
+
+            function startAlarm() {
+                alarm.currentTime = 0
+                alarm.loop = true
+                alarm.play()
+            }
+
+            function stopAlarm(){
+                alarm.pause()
+            }
+
+            function decreaseRods() {
+                data.rods -= 1
+                rodsInput.value = data.rods
+                updateRods()
+            }
+
+            function increaseRods() {
+                data.rods += 1
+                rodsInput.value = data.rods
+                updateRods()
+            }
+
+            function updateRods() {
+                rodsShowO.textContent = data.rods
+                rodsShow.textContent = data.rods
+                rodsShowDIV.textContent = data.rods
+            }
+
+            function decreaseTurbines() {
+                data.turbines -= 1
+                turbinesInput.value = data.turbines
+                updateTurbines()
+            }
+
+            function increaseTurbines() {
+                data.turbines += 1
+                turbinesInput.value = data.turbines
+                updateTurbines()
+            }
+
+            function updateTurbines() {
+                turbineShowO.textContent = data.turbines
+                turbineShow.textContent = data.turbines
+                turbineShowDIV.textContent = data.turbines
+            }
+
+            function buyECS() {
+                if (data.coins >= 200) {
+                    data.coins -= 200
+                    coinsShowO.textContent = data.coins
+                    buyECSB.setAttribute("disabled", "disabled")
+                    activateECSB.removeAttribute("disabled")
+                    activateECSB.className = "bought"
+                    localStorage.setItem("ECSbought", true)
+                    data.ECSAvailable = true
+                }
+            }
+
+            function buyEPRS() {
+                if (data.coins >= 200) {
+                    data.coins -= 200
+                    coinsShowO.textContent = data.coins
+                    buyEPRSB.setAttribute("disabled", "disabled")
+                    activateEPRSB.removeAttribute("disabled")
+                    activateEPRSB.className = "bought"
+                    localStorage.setItem("EPRSbought", true)
+                    data.EPRSAvailable = true
+                }
+            }
+
+            function activateECS() {
+                if (data.ECSAvailable) {
+                    data.ECSAvailable = false
+                    setTimeout(ECS, 1000)
+                    setTimeout(ECS, 2000)
+                    setTimeout(ECS, 3000)
+                    setTimeout(ECS, 4000)
+                    activateECSB.className = "onCooldown"
+                    activateECSB.value = "ON COOLDOWN"
+                    setTimeout(cooldownECSover, 60000)
+                }
+            }
+
+            function cooldownECSover() {
+                activateECSB.className = "available"
+                activateECSB.value = "Activate Emergency Cooling System"
+                data.ECSAvailable = true
+            }
+
+            function ECS() {
+                let dummyTemperature = data.temperature - 243
+                data.temperature = Math.max(dummyTemperature, 20)
+                temperatureShowO.textContent = data.temperature
+                temperatureShow.textContent = data.temperature
+            }
+
+            function activateEPRS() {
+                if (data.EPRSAvailable) {
+                    setTimeout(EPRS, 1000)
+                    setTimeout(EPRS, 2000)
+                    setTimeout(EPRS, 3000)
+                    setTimeout(EPRS, 4000)
+                    activateEPRSB.className = "onCooldown"
+                    activateEPRSB.value = "ON COOLDOWN"
+                    setTimeout(cooldownEPRSover, 60000)
+                }
+            }
+
+            function cooldownEPRSover() {
+                activateEPRSB.className = "available"
+                activateEPRSB.value = "Activate Emergency Pressure Relieve System"
+                data.EPRSAvailable = true
+            }
+
+            function EPRS() {
+                let dummyPressure = data.pressure - 9.7
+                data.pressure = Math.max(dummyPressure, 0)
+                pressureShowO.textContent = data.pressure
+                pressureShow.textContent = data.pressure
+            }
+
+            function mainloop() {
+                // Update reactor and turbine temperature
+                data.temperature += (100 - data.rods) * 1.25
+
+                let dummyTemperature = data.temperature
+                dummyTemperature -= data.turbines * 0.65
+                if (data.turbineTemperature < 100) {
+                    if (dummyTemperature >= 20) {
+                        if (data.turbines >= 30) {
+                            data.turbineTemperature += data.turbines * 0.05
+                            data.turbineTemperature = Math.round(data.turbineTemperature * 10) / 10
+                            turbineTemperatureShow.textContent = data.turbineTemperature
+                        } else {
+                            let dummyTurbineTemperature = data.turbineTemperature
+                            dummyTurbineTemperature -= 10
+                            data.turbineTemperature = Math.max(dummyTurbineTemperature, 0)
+                            turbineTemperatureShow.textContent = data.turbineTemperature
+                        }
+                        
+                        // Power generation
+                        let generation = data.turbines * 0.25
+
+                        data.generated += generation / 3.6                  // generation is in KWh h=hour
+                        data.coins += generation / 5
+                        coinsShowO.textContent = Math.round(data.coins)
+                        generationShowO.textContent = Math.round(generation * 10) / 10
+                        generationShow.textContent = Math.round(generation * 10) / 10
+                        generatedShowO.textContent = Math.round(data.generated * 10) / 10
+                        localStorage.setItem("generatingPower", generation)
+                        localStorage.setItem("generatedPower", data.generated)
+                        localStorage.setItem("coinsNRS", Math.round(data.coins))
+                        data.temperature = dummyTemperature
+                    } else {
+                        data.temperature = 20
+                        generationShowO.textContent = 0
+                        generationShow.textContent = 0
+                    }
+                }
+
+                if (data.turbines < 10) {
+                    let dummyTurbineTemperature = data.turbineTemperature
+                    dummyTurbineTemperature -= 10 - data.turbines
+                    data.turbineTemperature = Math.max(dummyTurbineTemperature, 0)
+                    turbineTemperatureShow.textContent = data.turbineTemperature
+                }
+
+                data.temperature = Math.round(data.temperature * 10) / 10
+                temperatureShowO.textContent = data.temperature
+                temperatureShow.textContent = data.temperature
+
+                // Update reactor pressure
+                data.pressure += (100 - data.rods) * 0.25
+                let dummyPressure = data.pressure
+                dummyPressure -= data.turbines * 0.13
+                dummyPressure -= dummyPressure * 0.02
+                data.pressure = Math.max(dummyPressure, 0)
+
+                data.pressure = Math.round(data.pressure * 10) / 10
+                pressureShowO.textContent = data.pressure
+                pressureShow.textContent = data.pressure
+
+                // Update buttons
+                let coinsDummy = data.coins
+                if (coinsDummy >= 200) {
+                    buyECSB.className = "buyable"
+                    buyEPRSB.className = "buyable"
+                } else {
+                    buyECSB.className = "notBuyable"
+                    buyEPRSB.className = "notBuyable"
+                }
+
+                // Update error panel
+                let meltdownTemperature
+                let meltdownPressure
+
+                if (data.temperature >= 1500) {
+                    overheat.className = "error"
+                    criticalOverheat.className = "error"
+                    meltdownTemperature = true
+                } else if (data.temperature >= 1300) {
+                    overheat.className = "error"
+                    criticalOverheat.className = "error"
+                    meltdownTemperature = false
+                } else if (data.temperature >= 1000) {
+                    overheat.className = "error"
+                    criticalOverPressure.className = "noError"
+                    meltdownTemperature = false
+                } else {
+                    overheat.className = "noError"
+                    criticalOverPressure.className = "noError"
+                    meltdownTemperature = false
+                }
+                
+                if (data.pressure >= 200) {
+                    overPressure.className = "error"
+                    criticalOverPressure.className = "error"
+                    meltdownPressure = true
+                } else if (data.pressure >= 175) {
+                    overPressure.className = "error"
+                    criticalOverPressure.className = "error"
+                    meltdownPressure = false
+                } else if (data.pressure >= 150) {
+                    overPressure.className = "error"
+                    criticalOverPressure.className = "noError"
+                    meltdownPressure = false
+                } else {
+                    overPressure.className = "noError"
+                    criticalOverPressure.className = "noError"
+                    meltdownPressure = false
+                }
+
+                if (data.turbineTemperature >= 100) {
+                    turbineOverheat.className = "error"
+                    turbineCritical.className = "error"
+                    turbineNotFunctional.className = "error"
+                } else if (data.turbineTemperature >= 75) {
+                    turbineOverheat.className = "error"
+                    turbineCritical.className = "error"
+                    turbineNotFunctional.className = "noError"
+                } else if (data.turbineTemperature >= 50) {
+                    turbineOverheat.className = "error"
+                    turbineCritical.className = "noError"
+                    turbineNotFunctional.className = "noError"
+                } else {
+                    turbineOverheat.className = "noError"
+                    turbineCritical.className = "noError"
+                    turbineNotFunctional.className = "noError"
+                }
+
+                if (meltdownTemperature || meltdownPressure) {
+                    startAlarm()
+                    meltdownImminent.className = "error"
+                } else {
+                    stopAlarm()
+                    meltdownImminent.className = "noError"
+                }
+
+                // Meltdown = gameover
+                if (data.temperature >= 2000 || data.pressure >= 250) {
+                    // meltdown
+                    meltdownTriggered()
+                    alert("Oops, you let the reactor explode. There was a meltdown. Seems like you let the temperature or the pressure climb.")
+                }
+
+                console.log("Temp:", data.temperature, "Pressure:", data.pressure);
+            }
+
+            window.addEventListener("beforeunload", save)
+
+            function save() {
+                clearInterval(mainloopID)
+                localStorage.setItem("temperatureNRS", data.temperature);
+                localStorage.setItem("pressureNRS", data.pressure);
+                localStorage.setItem("rodsNRS", data.rods);
+                localStorage.setItem("turbinesNRS", data.turbines);
+                localStorage.setItem("turbineTemperature", data.turbineTemperature);
+                console.log("Saved.");
+            }
+
+            function autoSave() {
+                localStorage.setItem("temperatureNRS", data.temperature);
+                localStorage.setItem("pressureNRS", data.pressure);
+                localStorage.setItem("rodsNRS", data.rods);
+                localStorage.setItem("turbinesNRS", data.turbines);
+                localStorage.setItem("turbineTemperature", data.turbineTemperature);
+                localStorage.setItem("coinsNRS", data.coins);
+                localStorage.setItem("generatedPower", data.generated)
+                // console.log("Autosaved.");
+            }
+
+            function rebootMainloop() {
+                clearInterval(mainloopID)
+                mainloopID = setInterval(mainloop, 1000)
+                console.log("Mainloop restarted");
+            }
+            
+            function reset() {
+                rodsInput.value = 100
+                rodsShowO.textContent = 100
+                rodsShow.textContent = 100
+                rodsShowDIV.textContent = 100
+                turbinesInput.value = 0
+                turbineShowO.textContent = 0
+                turbineShow.textContent = 0
+                turbineShowDIV.textContent = 0
+                temperatureShowO.textContent = 20
+                temperatureShow.textContent = 20
+                pressureShowO.textContent = 0
+                pressureShow.textContent = 0
+                turbineTemperatureShow.textContent = 0
+
+                data.rods = 100
+                data.turbines = 0
+                data.temperature = 20
+                data.pressure = 0
+                data.turbineTemperature = 0
+
+                overheat.className = "noError"
+                criticalOverheat.className = "noError"
+                overPressure.className = "noError"
+                criticalOverPressure.className = "noError"
+                turbineOverheat.className = "noError"
+                turbineCritical.className = "noError"
+                turbineNotFunctional.className = "noError"
+                meltdownImminent.className = "noError"
+                meltdown.className = "noError"
+                clearInterval(mainloopID)
+                mainloopID = setInterval(mainloop, 1000)
+            }
+
+            function meltdownTriggered() {
+                rodsInput.value = 100
+                turbinesInput.value = 0
+                temperatureShowO.textContent = 20
+                temperatureShow.textContent = 20
+                pressureShowO.textContent = 0
+                pressureShow.textContent = 0
+                turbineTemperatureShow.textContent = 0
+                
+                data.rods = 100
+                data.turbines = 0
+                data.temperature = 20
+                data.pressure = 0
+                data.turbineTemperature = 0
+                data.coins = 0
+
+                turbinesInput.setAttribute("disabled", "disabled");
+                decreaseTurbinesB.setAttribute("disabled", "disabled");
+                increaseTurbinesB.setAttribute("disabled", "disabled");
+                rodsInput.setAttribute("disabled", "disabled");
+                decreaseRodsB.setAttribute("disabled", "disabled");
+                increaseRodsB.setAttribute("disabled", "disabled");
+
+                autoSave()
+                localStorage.setItem("ECSbought", false)
+                localStorage.setItem("EPRSbought", false)
+
+                activateECSB.setAttribute("disabled", "disabled");
+                activateEPRSB.setAttribute("disabled", "disabled")
+
+                overheat.className = "noError"
+                criticalOverheat.className = "noError"
+                overPressure.className = "noError"
+                criticalOverPressure.className = "noError"
+                turbineOverheat.className = "noError"
+                turbineCritical.className = "noError"
+                turbineNotFunctional.className = "noError"
+                meltdownImminent.className = "noError"
+                meltdown.className = "error"
+                clearInterval(mainloopID)
+                mainloopID = setInterval(mainloop, 1000)
+                alert("Close and reopen this tab.")
+            }
+
+            function init() {
+                let rodsDummy = JSON.parse(localStorage.getItem("rodsNRS"));
+                if (rodsDummy !== null) {
+                    data.rods = rodsDummy
+                    rodsInput.value = rodsDummy
+                    rodsShowO.textContent = rodsDummy
+                    rodsShow.textContent = rodsDummy
+                    rodsShowDIV.textContent = rodsDummy
+                } else {
+                    data.rods = 100    
+                }
+
+                let turbinesDummy = JSON.parse(localStorage.getItem("turbinesNRS"));
+                if (turbinesDummy !== null) {
+                    data.turbines = turbinesDummy
+                    turbinesInput.value = turbinesDummy
+                    turbineShowO.textContent = turbinesDummy
+                    turbineShow.textContent = turbinesDummy
+                    turbineShowDIV.textContent = turbinesDummy
+                } else {
+                    data.turbines = 0
+                }
+
+                let temperatureDummy = JSON.parse(localStorage.getItem("temperatureNRS"))
+                if (temperatureDummy !== null) {
+                    data.temperature = temperatureDummy
+                    temperatureShowO.textContent = temperatureDummy
+                    temperatureShow.textContent = temperatureDummy
+                } else {
+                    data.temperature = 20
+                }
+
+                let pressureDummy = JSON.parse(localStorage.getItem("pressureNRS"))
+                if (pressureDummy !== null) {
+                    data.pressure = pressureDummy
+                    pressureShowO.textContent = pressureDummy
+                    pressureShow.textContent = pressureDummy
+                } else {
+                    data.pressure = 0
+                }
+
+                let turbineTemperatureDummy = JSON.parse(localStorage.getItem("turbineTemperature"));
+                if (turbineTemperatureDummy !== null) {
+                    data.turbineTemperature = turbineTemperatureDummy
+                    turbineTemperatureShow.textContent = turbineTemperatureDummy
+                } else {
+                    data.turbineTemperature = 0
+                }
+
+                let ECSboughtDummy = JSON.parse(localStorage.getItem("ECSbought"));
+                if (ECSboughtDummy === true) {
+                    buyECSB.setAttribute("disabled", "disabled")
+                    activateECSB.removeAttribute("disabled")
+                    activateECSB.className = "bought"
+                    data.ECSAvailable = true
+                } else {
+                    data.ECSAvailable = false
+                }
+
+                let EPRSboughtDummy = JSON.parse(localStorage.getItem("EPRSbought"));
+                if (EPRSboughtDummy === true) {
+                    buyEPRSB.setAttribute("disabled", "disabled")
+                    activateEPRSB.removeAttribute("disabled")
+                    activateEPRSB.className = "bought"
+                    data.EPRSAvailable = true
+                } else {
+                    data.EPRSAvailable = false
+                }
+
+                let generatedDummy = JSON.parse(localStorage.getItem("generatedPower"));
+                if (generatedDummy === null) {
+                    localStorage.setItem("generatedPower", 0)
+                    data.generated = 0
+                } else {
+                    generatedShowO.textContent = generatedDummy
+                    data.generated = generatedDummy
+                }
+
+                let coinsDummy = JSON.parse(localStorage.getItem("coinsNRS"));
+                if (coinsDummy === null) {
+                    localStorage.setItem("coinsNRS", 0)
+                    data.coins = 0
+                } else {
+                    coinsShowO.textContent = coinsDummy
+                    data.coins = coinsDummy
+                }
+
+                mainloopID = setInterval(mainloop, 1000)
+                autoSaveID = setInterval(autoSave, 5000)
+    
+                console.table(data);
+            }
+
+            init()
+        </script>
+    </body>
+</html>
