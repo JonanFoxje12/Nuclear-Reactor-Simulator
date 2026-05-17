@@ -8,6 +8,7 @@ Changelog started at 13-5-2026
 5. Mayor Update
 
 ### Still working on
+- Structure improvement
 - SCRAM upgrade (for in the shop)
 - Upgrades for backup-systems
 - More shop items
