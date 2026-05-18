@@ -8,11 +8,9 @@ Changelog started at 13-5-2026
 5. Mayor Update
 
 ### Still working on
-- Structure improvement
 - SCRAM upgrade (for in the shop)
 - Upgrades for backup-systems
 - More shop items
-- Colors for control panel in shop
 - If you have any ideas, post them as an issue!
 
 ## Bug fixes and structure improvement (May 18<sup>th</sup>): bug fixes
