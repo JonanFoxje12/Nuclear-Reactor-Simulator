@@ -209,6 +209,7 @@
                 coins: 0,
                 ECSAvailable: false,
                 EPRSAvailable: false,
+                generation: 0,
                 generated: 0,
             }
 
@@ -310,8 +311,7 @@
             function ECS() {
                 let dummyTemperature = data.temperature - 243
                 data.temperature = Math.max(dummyTemperature, 20)
-                temperatureShowO.textContent = data.temperature
-                temperatureShow.textContent = data.temperature
+                render()
             }
 
             function activateEPRS() {
@@ -335,8 +335,7 @@
             function EPRS() {
                 let dummyPressure = data.pressure - 9.7
                 data.pressure = Math.max(dummyPressure, 0)
-                pressureShowO.textContent = data.pressure
-                pressureShow.textContent = data.pressure
+                render()
             }
 
             function mainloop() {
@@ -350,31 +349,25 @@
                         if (data.turbines >= 30) {
                             data.turbineTemperature += data.turbines * 0.05
                             data.turbineTemperature = Math.round(data.turbineTemperature * 10) / 10
-                            turbineTemperatureShow.textContent = data.turbineTemperature
                         } else {
                             let dummyTurbineTemperature = data.turbineTemperature
                             dummyTurbineTemperature -= 10
                             data.turbineTemperature = Math.max(dummyTurbineTemperature, 0)
-                            turbineTemperatureShow.textContent = data.turbineTemperature
                         }
                         
                         // Power generation
-                        let generation = data.turbines * 0.25
+                        data.generation = data.turbines * 0.25
 
-                        data.generated += generation / 3.6                  // generation is in KWh h=hour
-                        data.coins += generation / 5
-                        coinsShowO.textContent = Math.round(data.coins)
-                        generationShowO.textContent = Math.round(generation * 10) / 10
-                        generationShow.textContent = Math.round(generation * 10) / 10
-                        generatedShowO.textContent = Math.round(data.generated * 10) / 10
-                        localStorage.setItem("generatingPower", generation)
+                        data.generated += data.generation / 3.6                  // generation is in KWh h=hour
+                        data.coins += data.generation / 5
+        
+                        localStorage.setItem("generatingPower", data.generation)
                         localStorage.setItem("generatedPower", data.generated)
-                        localStorage.setItem("coinsNRS", Math.round(data.coins))
+                        localStorage.setItem("coinsNRS", data.coins)
                         data.temperature = dummyTemperature
                     } else {
                         data.temperature = 20
-                        generationShowO.textContent = 0
-                        generationShow.textContent = 0
+                        data.generation = 0
                     }
                 }
 
@@ -382,12 +375,9 @@
                     let dummyTurbineTemperature = data.turbineTemperature
                     dummyTurbineTemperature -= 10 - data.turbines
                     data.turbineTemperature = Math.max(dummyTurbineTemperature, 0)
-                    turbineTemperatureShow.textContent = data.turbineTemperature
                 }
 
                 data.temperature = Math.round(data.temperature * 10) / 10
-                temperatureShowO.textContent = data.temperature
-                temperatureShow.textContent = data.temperature
 
                 // Update reactor pressure
                 data.pressure += (100 - data.rods) * 0.25
@@ -397,8 +387,6 @@
                 data.pressure = Math.max(dummyPressure, 0)
 
                 data.pressure = Math.round(data.pressure * 10) / 10
-                pressureShowO.textContent = data.pressure
-                pressureShow.textContent = data.pressure
 
                 // Update buttons
                 let coinsDummy = data.coins
@@ -428,7 +416,7 @@
                     meltdownTemperature = false
                 } else {
                     overheat.className = "noError"
-                    criticalOverPressure.className = "noError"
+                    criticalOverheat.className = "noError"
                     meltdownTemperature = false
                 }
                 
@@ -482,10 +470,48 @@
                     meltdownTriggered()
                 }
 
+                render()
                 console.log("Temp:", data.temperature, "Pressure:", data.pressure);
             }
 
-            window.addEventListener("beforeunload", save)
+            function init() {
+                let gottenData = JSON.parse(localStorage.getItem("dataNRS"))
+                if (gottenData !== null) {
+                    data = gottenData
+                }
+
+                mainloopID = setInterval(mainloop, 1000)
+                autoSaveID = setInterval(autoSave, 5000)
+    
+                console.table(data);
+            }
+
+            function render() {
+                temperatureShowO.textContent = Math.round(data.temperature * 10) / 10;
+                temperatureShow.textContent = Math.round(data.temperature * 10) / 10;
+
+                pressureShowO.textContent = Math.round(data.pressure * 10) / 10;
+                pressureShow.textContent = Math.round(data.pressure * 10) / 10;
+
+                rodsInput.value = data.rods;
+                rodsShowO.textContent = data.rods;
+                rodsShow.textContent = data.rods;
+                rodsShowDIV.textContent = data.rods;
+
+                turbinesInput.value = data.turbines;
+                turbineShowO.textContent = data.turbines;
+                turbineShow.textContent = data.turbines;
+                turbineShowDIV.textContent = data.turbines;
+
+                turbineTemperatureShow.textContent = Math.round(data.turbineTemperature);
+
+                generationShowO.textContent = Math.round(data.generation * 10) / 10;
+                generationShow.textContent = Math.round(data.generation * 10) / 10;
+
+                generatedShowO.textContent = Math.round(data.generated * 100) / 100;
+
+                coinsShowO.textContent = Math.round(data.coins);
+            }
 
             function save() {
                 clearInterval(mainloopID)
@@ -582,19 +608,8 @@
                 alert("Close and reopen this tab.")
             }
 
-            function init() {
-                let gottenData = JSON.parse(localStorage.getItem("dataNRS"))
-                if (gottenData !== null) {
-                    data = gottenData
-                }
-
-                mainloopID = setInterval(mainloop, 1000)
-                autoSaveID = setInterval(autoSave, 5000)
-    
-                console.table(data);
-            }
-
             init()
+            window.addEventListener("beforeunload", save)
         </script>
     </body>
 </html>
