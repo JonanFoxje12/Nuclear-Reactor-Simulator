@@ -482,8 +482,8 @@
 
                 mainloopID = setInterval(mainloop, 1000)
                 autoSaveID = setInterval(autoSave, 5000)
-    
                 console.table(data);
+                render()
             }
 
             function render() {
@@ -530,25 +530,12 @@
             }
             
             function reset() {
-                rodsInput.value = 100
-                rodsShowO.textContent = 100
-                rodsShow.textContent = 100
-                rodsShowDIV.textContent = 100
-                turbinesInput.value = 0
-                turbineShowO.textContent = 0
-                turbineShow.textContent = 0
-                turbineShowDIV.textContent = 0
-                temperatureShowO.textContent = 20
-                temperatureShow.textContent = 20
-                pressureShowO.textContent = 0
-                pressureShow.textContent = 0
-                turbineTemperatureShow.textContent = 0
-
                 data.rods = 100
                 data.turbines = 0
                 data.temperature = 20
                 data.pressure = 0
                 data.turbineTemperature = 0
+                render()
 
                 overheat.className = "noError"
                 criticalOverheat.className = "noError"
