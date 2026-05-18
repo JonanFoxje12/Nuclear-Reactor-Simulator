@@ -15,6 +15,10 @@ Changelog started at 13-5-2026
 - Colors for control panel in shop
 - If you have any ideas, post them as an issue!
 
+## Bug fixes and structure improvement (May 18<sup>th</sup>): bug fixes
+- Some bug fixes 🪲🔧
+- Structure improved with the render function
+
 ## HTML Manual added (May 13<sup>th</sup> 2026): update
 - The manual can easily be accessed from the simulater page.
 
