@@ -9,8 +9,6 @@ Changelog started at 13-5-2026
 
 ### Still working on
 - SCRAM upgrade (for in the shop)
-- Upgrades for backup-systems
-- More shop items
 - If you have any ideas, post them as an issue!
 
 ## Backup-system update (28th of May 2026): big update
