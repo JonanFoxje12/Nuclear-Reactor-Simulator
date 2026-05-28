@@ -29,26 +29,19 @@
 
             .onCooldown {
                 background-color: red;
-            }
-
-            .available {
-                cursor: pointer;
-            }
-
-            .notBought {
                 cursor: not-allowed;
             }
 
-            .bought {
+            .active {
+                background-color: lime;
+            }
+
+            .pointer {
                 cursor: pointer;
             }
 
-            .notBuyable {
+            .notAllowed {
                 cursor: not-allowed;
-            }
-
-            .buyable {
-                cursor: pointer;
             }
 
             .noError {
@@ -100,14 +93,14 @@
                 <p>Rods</p><br>
                 <input type="button" value="-" id="decreaseRodsB" onclick="decreaseRods()">
                 <input type="button" value="+" id="increaseRodsB" onclick="increaseRods()"><br>
-                <input type="range" id="rodsInput" min="0" max="100" value="100" onchange="updateRods()">
+                <input type="range" id="rodsInput" min="0" max="100" value="100" onchange="rodsChanged()">
                 <br><p id="rodsShowDIV">100</p><p>%</p>
             </div>
             <div class="ib">
                 <p>Turbines</p><br>
                 <input type="button" value="-" id="decreaseTurbinesB" onclick="decreaseTurbines()">
                 <input type="button" value="+" id="increaseTurbinesB" onclick="increaseTurbines()"><br>
-                <input type="range" id="turbinesInput" min="0" max="100" value="0" onchange="updateTurbines()">
+                <input type="range" id="turbinesInput" min="0" max="100" value="0" onchange="turbinesChanged()">
                 <br><p id="turbineShowDIV">0</p><p>%</p>
             </div>
         </fieldset>
@@ -132,19 +125,21 @@
         <fieldset>
             <legend>Reactor temperature</legend>
             <p>Temperature:&nbsp;</p><p id="temperatureShow">20</p><p>°C</p><br>
-            <input type="button" value="Activate Emergency Cooling System" id="activateECSB" class="notBought" onclick="activateECS()" disabled><br>
+            <input type="button" value="Activate Emergency Cooling System (level 1)" id="activateECSB" class="notAllowed" onclick="activateECS()" disabled><br>
+            <p>Cooldown:&nbsp;</p><p id="ECSCooldown">60</p>
         </fieldset>
 
         <fieldset>
             <legend>Pressure</legend>
             <p>Reactor pressure:&nbsp;</p><p id="pressureShow">0</p><p>&nbsp;bar</p><br>
-            <input type="button" value="Activate Emergency Pressure Relieve System" id="activateEPRSB" class="notBought" onclick="activateEPRS()" disabled><br>
+            <input type="button" value="Activate Emergency Pressure Relieve System (level 1)" id="activateEPRSB" class="notAllowed" onclick="activateEPRS()" disabled><br>
+            <p>Cooldown:&nbsp;</p><p id="EPRSCooldown">60</p>
         </fieldset>
 
         <fieldset>
             <legend>Shop</legend>
-            <input type="button" value="Buy Emergency Cooling System for 200 coins" id="buyECSB" onclick="buyECS()"><br>
-            <input type="button" value="Buy Emergency Pressure Relieve System for 200 coins" id="buyEPRSB" onclick="buyEPRS()">
+            <input type="button" value="Buy Emergency Cooling System (level 1) for 200 coins" id="buyECSB" onclick="buyECS()"><br>
+            <input type="button" value="Buy Emergency Pressure Relieve System (level 1) for 200 coins" id="buyEPRSB" onclick="buyEPRS()">
         </fieldset>
 
         <fieldset>
@@ -197,8 +192,13 @@
             const buyECSB = document.getElementById("buyECSB");
             const buyEPRSB = document.getElementById("buyEPRSB");
 
+            const ECSCooldown = document.getElementById("ECSCooldown")
+            const EPRSCooldown = document.getElementById("EPRSCooldown")
+
             let mainloopID
             let autoSaveID
+            let ECSCooldownID
+            let EPRSCooldownID
 
             let data = {
                 temperature: 20,
@@ -206,11 +206,19 @@
                 rods: 100,
                 turbines: 0,
                 turbineTemperature: 0,
-                coins: 0,
-                ECSAvailable: false,
-                EPRSAvailable: false,
                 generation: 0,
                 generated: 0,
+                coins: 0,
+                ECSAvailable: true,
+                EPRSAvailable: true,
+                ECSTimer: 60,
+                EPRSTimer: 60,
+                ECS1Bought: false,
+                ECS2Bought: false,
+                ECS3Bought: false,
+                EPRS1Bought: false,
+                EPRS2Bought: false,
+                EPRS3Bought: false,
             }
 
             function startAlarm() {
@@ -227,91 +235,175 @@
                 let dummyRods = data.rods - 1
                 data.rods = Math.max(dummyRods, 0)
                 rodsInput.value = data.rods
-                updateRods()
+                save()
+                render()
             }
 
             function increaseRods() {
                 let dummyRods = data.rods + 1
                 data.rods = Math.min(dummyRods, 100)
                 rodsInput.value = data.rods
-                updateRods()
+                save()
+                render()
             }
 
-            function updateRods() {
+            function rodsChanged() {
                 data.rods = Number(rodsInput.value)
-                rodsShowO.textContent = data.rods
-                rodsShow.textContent = data.rods
-                rodsShowDIV.textContent = data.rods
+                save()
+                render()
             }
 
             function decreaseTurbines() {
                 let dummyTurbines = data.turbines - 1
                 data.turbines = Math.max(dummyTurbines, 0)
                 turbinesInput.value = data.turbines
-                updateTurbines()
+                save()
+                render()
             }
 
             function increaseTurbines() {
                 let dummyTurbines = data.turbines + 1
                 data.turbines = Math.min(dummyTurbines, 100)
                 turbinesInput.value = data.turbines
-                updateTurbines()
+                save()
+                render()
             }
 
-            function updateTurbines() {
+            function turbinesChanged() {
                 data.turbines = Number(turbinesInput.value)
-                turbineShowO.textContent = data.turbines
-                turbineShow.textContent = data.turbines
-                turbineShowDIV.textContent = data.turbines
+                save()
+                render()
             }
 
+            // Emergency Cooling System
             function buyECS() {
-                if (data.coins >= 200) {
-                    data.coins -= 200
-                    coinsShowO.textContent = data.coins
-                    buyECSB.setAttribute("disabled", "disabled")
-                    activateECSB.removeAttribute("disabled")
-                    activateECSB.className = "bought"
-                    localStorage.setItem("ECSbought", true)
-                    data.ECSAvailable = true
+                if (!data.ECS1Bought) {
+                    if (data.coins >= 200) {
+                        data.coins -= 200
+                        activateECSB.removeAttribute("disabled")
+                        activateECSB.className = "pointer"
+                        data.ECS1Bought = true
+                        buyECSB.value = "Buy Emergency Cooling System (level 2) for 300 coins"
+                        activateECSB.value = "Activate Emergency Cooling System (level 1)"
+                        console.log("ECS level 1 is bought.");
+                    } else {
+                        console.warn("Not enough coins to buy ECS level 1.");
+                    }
+                } else if (data.ECS1Bought && !data.ECS2Bought) {
+                    if (data.coins >= 300) {
+                        data.coins -= 300
+                        data.ECS2Bought = true
+                        buyECSB.value = "Buy Emergency Cooling System (level 3) for 500 coins"
+                        activateECSB.value = "Activate Emergency Cooling System (level 2)"
+                        console.log("ECS level 2 is bought.");
+                    } else {
+                        console.warn("Not enough coins to buy ECS level 2.")
+                    }
+                } else if (data.ECS1Bought && data.ECS2Bought && !data.ECS3Bought) {
+                    if (data.coins >= 500) {
+                        data.coins -= 500
+                        data.ECS3Bought = true
+                        buyECSB.setAttribute("disabled", "disabled")
+                        activateECSB.value = "Activate Emergency Cooling System (level 3)"
+                        console.log("ECS level 3 is bought.");
+                    } else {
+                        console.warn("Not enough coins to buy ECS level 3.")
+                    }
                 }
-            }
-
-            function buyEPRS() {
-                if (data.coins >= 200) {
-                    data.coins -= 200
-                    coinsShowO.textContent = data.coins
-                    buyEPRSB.setAttribute("disabled", "disabled")
-                    activateEPRSB.removeAttribute("disabled")
-                    activateEPRSB.className = "bought"
-                    localStorage.setItem("EPRSbought", true)
-                    data.EPRSAvailable = true
-                }
+                save()
             }
 
             function activateECS() {
-                if (data.ECSAvailable) {
-                    data.ECSAvailable = false
+                if (data.ECSAvailable && data.ECS1Bought) {     // If the base is bought, any of the cooling systems is bought. Even if an
+                    data.ECSAvailable = false                   // upgrade, than still the ECS1Bought will be true.
+                    activateECSB.className = "active"
+                    activateECSB.value = "ACTIVE"
+                    data.ECSTimer = 60
                     setTimeout(ECS, 1000)
                     setTimeout(ECS, 2000)
                     setTimeout(ECS, 3000)
                     setTimeout(ECS, 4000)
-                    activateECSB.className = "onCooldown"
-                    activateECSB.value = "ON COOLDOWN"
-                    setTimeout(cooldownECSover, 60000)
+                    data.ECSTimer = 60
+                    setTimeout(setECSCooldown, 4000)
                 }
             }
 
-            function cooldownECSover() {
-                activateECSB.className = "available"
-                activateECSB.value = "Activate Emergency Cooling System"
-                data.ECSAvailable = true
+            function setECSCooldown() {
+                activateECSB.className = "onCooldown"
+                activateECSB.value = "ON COOLDOWN"
+                ECSCooldownID = setInterval(decreaseCooldownECS, 1000)
+            }
+
+            function decreaseCooldownECS() {
+                if (data.ECSTimer > 0) {
+                    data.ECSTimer -= 1
+                    ECSCooldown.textContent = data.ECSTimer
+                } else {
+                    clearInterval(ECSCooldownID)
+                    activateECSB.className = "pointer"
+                    data.ECSAvailable = true
+                    if (data.ECS3Bought) {
+                        activateECSB.value = "Activate Emergency Cooling System (level 3)"
+                    } else if (data.ECS2Bought) {
+                        activateECSB.value = "Activate Emergency Cooling System (level 2)"
+                    } else if (data.ECS1Bought) {
+                        activateECSB.value = "Activate Emergency Cooling System (level 1)"
+                    }
+                }
+                save()
             }
 
             function ECS() {
-                let dummyTemperature = data.temperature - 243
+                let decrease
+                if (data.ECS3Bought) {
+                    decrease = 512
+                } else if (data.ECS2Bought) {
+                    decrease = 243
+                } else if (data.ECS1Bought) {
+                    decrease = 126
+                }
+                let dummyTemperature = data.temperature - decrease
                 data.temperature = Math.max(dummyTemperature, 20)
+                save()
                 render()
+            }
+
+            // Emergency Pressure Relief System
+            function buyEPRS() {
+                if (!data.EPRS1Bought) {
+                    if (data.coins >= 200) {
+                        data.coins -= 200
+                        activateEPRSB.removeAttribute("disabled")
+                        activateEPRSB.className = "pointer"
+                        data.EPRS1Bought = true
+                        buyEPRSB.value = "Buy Emergency Pressure Relieve System (level 2) for 300 coins"
+                        activateEPRSB.value = "Activate Emergency Pressure Relief System (level 1)"
+                        console.log("EPRS level 1 is bought.");
+                    } else {
+                        console.warn("Not enough coins to buy EPRS level 1.");
+                    }
+                } else if (data.EPRS1Bought && !data.EPRS2Bought) {
+                    if (data.coins >= 300) {
+                        data.coins -= 300
+                        data.EPRS2Bought = true
+                        buyEPRSB.value = "Buy Emergency Pressure Relieve System (level 3) for 500 coins"
+                    activateEPRSB.value = "Activate Emergency Pressure Relief System (level 2)"
+                        console.log("EPRS level 2 is bought.");
+                    } else {
+                        console.warn("Not enough coins to buy EPRS level 2.")
+                    }
+                } else if (data.EPRS1Bought && data.EPRS2Bought && !data.EPRS3Bought) {
+                    if (data.coins >= 500) {
+                        data.coins -= 500
+                        data.EPRS3Bought = true
+                        buyEPRSB.setAttribute("disabled", "disabled")
+                        activateEPRSB.value = "Activate Emergency Pressure Relief System (level 3)"
+                        console.log("EPRS level 3 is bought.");
+                    } else {
+                        console.warn("Not enough coins to buy EPRS level 3.")
+                    }
+                }
+                save()
             }
 
             function activateEPRS() {
@@ -326,15 +418,43 @@
                 }
             }
 
-            function cooldownEPRSover() {
-                activateEPRSB.className = "available"
-                activateEPRSB.value = "Activate Emergency Pressure Relieve System"
-                data.EPRSAvailable = true
+            function setEPRSCooldown() {
+                activateEPRSB.className = "onCooldown"
+                activateEPRSB.value = "ON COOLDOWN"
+                EPRSCooldownID = setInterval(decreaseCooldownEPRS, 1000)
+            }
+
+            function decreaseCooldownEPRS() {
+                if (data.EPRSTimer > 0) {
+                    data.EPRSTimer -= 1
+                    EPRSCooldown.textContent = data.EPRSTimer
+                } else {
+                    clearInterval(EPRSCooldownID)
+                    activateEPRSB.className = "pointer"
+                    data.EPRSAvailable = true
+                    if (data.EPRS3Bought) {
+                        activateEPRSB.value = "Activate Emergency Cooling System (level 3)"
+                    } else if (data.EPRS2Bought) {
+                        activateEPRSB.value = "Activate Emergency Cooling System (level 2)"
+                    } else if (data.EPRS1Bought) {
+                        activateEPRSB.value = "Activate Emergency Cooling System (level 1)"
+                    }
+                }
+                save()
             }
 
             function EPRS() {
-                let dummyPressure = data.pressure - 9.7
+                let decrease
+                if (data.EPRS3Bought) {
+                    decrease = 26.3
+                } else if (data.EPRS2Bought) {
+                    decrease = 14.6
+                } else if (data.EPRS1Bought) {
+                    decrease = 9.7
+                }
+                let dummyPressure = data.pressure - decrease
                 data.pressure = Math.max(dummyPressure, 0)
+                save()
                 render()
             }
 
@@ -344,7 +464,7 @@
 
                 let dummyTemperature = data.temperature
                 dummyTemperature -= data.turbines * 0.65
-                if (data.turbineTemperature < 100) {
+                if (data.turbineTemperature < 200) {
                     if (dummyTemperature >= 20) {
                         if (data.turbines >= 30) {
                             data.turbineTemperature += data.turbines * 0.05
@@ -383,7 +503,7 @@
                 data.pressure += (100 - data.rods) * 0.25
                 let dummyPressure = data.pressure
                 dummyPressure -= data.turbines * 0.13
-                dummyPressure -= dummyPressure * 0.02
+                dummyPressure -= dummyPressure * 0.01
                 data.pressure = Math.max(dummyPressure, 0)
 
                 data.pressure = Math.round(data.pressure * 10) / 10
@@ -391,11 +511,11 @@
                 // Update buttons
                 let coinsDummy = data.coins
                 if (coinsDummy >= 200) {
-                    buyECSB.className = "buyable"
-                    buyEPRSB.className = "buyable"
+                    buyECSB.className = "pointer"
+                    buyEPRSB.className = "pointer"
                 } else {
-                    buyECSB.className = "notBuyable"
-                    buyEPRSB.className = "notBuyable"
+                    buyECSB.className = "notAllowed"
+                    buyEPRSB.className = "notAllowed"
                 }
 
                 // Update error panel
@@ -438,15 +558,15 @@
                     meltdownPressure = false
                 }
 
-                if (data.turbineTemperature >= 100) {
+                if (data.turbineTemperature >= 200) {
                     turbineOverheat.className = "error"
                     turbineCritical.className = "error"
                     turbineNotFunctional.className = "error"
-                } else if (data.turbineTemperature >= 75) {
+                } else if (data.turbineTemperature >= 175) {
                     turbineOverheat.className = "error"
                     turbineCritical.className = "error"
                     turbineNotFunctional.className = "noError"
-                } else if (data.turbineTemperature >= 50) {
+                } else if (data.turbineTemperature >= 150) {
                     turbineOverheat.className = "error"
                     turbineCritical.className = "noError"
                     turbineNotFunctional.className = "noError"
@@ -470,18 +590,123 @@
                     meltdownTriggered()
                 }
 
+                save()
                 render()
-                console.log("Temp:", data.temperature, "Pressure:", data.pressure);
+                console.log("Mainloop executed.");
             }
 
             function init() {
-                let gottenData = JSON.parse(localStorage.getItem("dataNRS"))
-                if (gottenData !== null) {
-                    data = gottenData
+                data = JSON.parse(localStorage.getItem("dataNRS"))
+
+                if (data.temperature == null) {
+                    data.temperature = 20
+                }
+
+                if (data.pressure == null) {
+                    data.pressure = 0
+                }
+                
+                if (data.rods == null) {
+                    data.rods = 100
+                }
+
+                if (data.turbines == null) {
+                    data.turbines = 0
+                }
+
+                if (data.turbineTemperature == null) {
+                    data.turbineTemperature = 0
+                }
+
+                if (data.generation == null) {
+                    data.generation = 0
+                }
+
+                if (data.generated == null) {
+                    data.generated = 0
+                }
+
+                if (data.coins == null) {
+                    data.coins = 0
+                }
+
+                if (data.ECSAvailable == null) {
+                    data.ECSAvailable = true
+                }
+
+                if (data.EPRSAvailable == null) {
+                    data.EPRSAvailable = true
+                }
+
+                if (data.ECSTimer == null) {
+                    data.ECSTimer = 60
+                }
+
+                if (data.EPRSTimer == null) {
+                    data.EPRSTimer = 60
+                }
+
+                if (data.ECS1Bought == null) {
+                    data.ECS1Bought = false
+                }
+
+                if (data.ECS2Bought == null) {
+                    data.ECS2Bought = false
+                }
+
+                if (data.ECS3Bought == null) {
+                    data.ECS3Bought = false
+                }
+
+                if (data.EPRS1Bought == null) {
+                    data.EPRS1Bought = false
+                }
+
+                if (data.EPRS2Bought == null) {
+                    data.EPRS2Bought = false
+                }
+
+                if (data.EPRS3Bought == null) {
+                    data.EPRS3Bought = false
+                }
+
+                save()
+
+                if (data.ECS3Bought) {
+                    buyECSB.setAttribute("disabled", "disabled")
+                    activateECSB.value = "Activate Emergency Cooling System (level 3)"
+                    activateECSB.removeAttribute("disabled")
+                    activateECSB.className = "pointer"
+                } else if (data.ECS2Bought) {
+                    buyECSB.value = "Buy Emergency Cooling System (level 3) for 500 coins"
+                    activateECSB.value = "Activate Emergency Cooling System (level 2)"
+                    activateECSB.removeAttribute("disabled")
+                    activateECSB.className = "pointer"
+                } else if (data.ECS1Bought) {
+                    buyECSB.value = "Buy Emergency Cooling System (level 2) for 300 coins"
+                    activateECSB.value = "Activate Emergency Cooling System (level 1)"
+                    activateECSB.removeAttribute("disabled")
+                    activateECSB.className = "pointer"
+                }
+
+                if (data.EPRS3Bought) {
+                    buyEPRSB.setAttribute("disabled", "disabled")
+                    activateEPRSB.value = "Activate Emergency Pressure Relief System (level 3)"
+                    activateEPRSB.removeAttribute("disabled")
+                    activateEPRSB.className = "pointer"
+                } else if (data.EPRS2Bought) {
+                    buyEPRSB.value = "Buy Emergency Pressure Relieve System (level 3) for 500 coins"
+                    activateEPRSB.value = "Activate Emergency Pressure Relief System (level 2)"
+                    activateEPRSB.removeAttribute("disabled")
+                    activateEPRSB.className = "pointer"
+                } else if (data.EPRS1Bought) {
+                    buyEPRSB.value = "Buy Emergency Pressure Relieve System (level 2) for 300 coins"
+                    activateEPRSB.value = "Activate Emergency Pressure Relief System (level 1)"
+                    activateEPRSB.removeAttribute("disabled")
+                    activateEPRSB.className = "pointer"
                 }
 
                 mainloopID = setInterval(mainloop, 1000)
-                autoSaveID = setInterval(autoSave, 5000)
                 console.table(data);
                 render()
             }
@@ -514,13 +739,7 @@
             }
 
             function save() {
-                clearInterval(mainloopID)
                 localStorage.setItem("dataNRS", JSON.stringify(data))
-            }
-
-            function autoSave() {
-                localStorage.setItem("dataNRS", JSON.stringify(data))
-                console.log("Autosaved.");
             }
 
             function rebootMainloop() {
@@ -565,6 +784,12 @@
                 data.pressure = 0
                 data.turbineTemperature = 0
                 data.coins = 0
+                data.ECS1Bought = false
+                data.ECS2Bought = false
+                data.ECS3Bought = false
+                data.EPRS1Bought = false
+                data.EPRS2Bought = false
+                data.EPRS3Bought = false
 
                 turbinesInput.setAttribute("disabled", "disabled");
                 decreaseTurbinesB.setAttribute("disabled", "disabled");
@@ -573,9 +798,7 @@
                 decreaseRodsB.setAttribute("disabled", "disabled");
                 increaseRodsB.setAttribute("disabled", "disabled");
 
-                autoSave()
-                localStorage.setItem("ECSbought", false)
-                localStorage.setItem("EPRSbought", false)
+                save()
 
                 activateECSB.setAttribute("disabled", "disabled");
                 activateEPRSB.setAttribute("disabled", "disabled")
