@@ -58,4 +58,4 @@ Reason: the reactor temperature climbed above 2000°C or the pressure climbed to
 What you should do: close and reopen the page and re-begin playing the game, all your progress is gone.
 ## Other
 ### Coins
-Coins can be spend in the shop. They are obtained when power is generated.
+Coins can be spent in the shop. They are obtained when power is generated.
