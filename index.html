@@ -219,16 +219,21 @@
                 EPRS1Bought: false,
                 EPRS2Bought: false,
                 EPRS3Bought: false,
+                alarmStarted: false
             }
 
             function startAlarm() {
-                alarm.currentTime = 0
-                alarm.loop = true
-                alarm.play()
+                if (!data.alarmStarted) {
+                    alarm.currentTime = 0
+                    alarm.loop = true
+                    alarm.play()
+                    data.alarmStarted = true
+                }
             }
 
             function stopAlarm(){
                 alarm.pause()
+                data.alarmStarted = false
             }
 
             function decreaseRods() {
@@ -328,7 +333,10 @@
                 }
             }
 
-            function setECSCooldown() {
+            function setECSCooldown(launchedFromInit = false) {
+                if (!launchedFromInit) {
+                    data.ECSTimer = 60
+                }
                 activateECSB.className = "onCooldown"
                 activateECSB.value = "ON COOLDOWN"
                 ECSCooldownID = setInterval(decreaseCooldownECS, 1000)
@@ -412,13 +420,16 @@
                     setTimeout(EPRS, 2000)
                     setTimeout(EPRS, 3000)
                     setTimeout(EPRS, 4000)
-                    activateEPRSB.className = "onCooldown"
-                    activateEPRSB.value = "ON COOLDOWN"
-                    setTimeout(cooldownEPRSover, 60000)
+                    activateEPRSB.className = "active"
+                    activateEPRSB.value = "ACTIVE"
+                    setTimeout(setEPRSCooldown, 4000)
                 }
             }
 
-            function setEPRSCooldown() {
+            function setEPRSCooldown(launchedFromInit = false) {
+                if (!launchedFromInit) {
+                    data.EPRSTimer = 60
+                }
                 activateEPRSB.className = "onCooldown"
                 activateEPRSB.value = "ON COOLDOWN"
                 EPRSCooldownID = setInterval(decreaseCooldownEPRS, 1000)
@@ -510,11 +521,23 @@
 
                 // Update buttons
                 let coinsDummy = data.coins
-                if (coinsDummy >= 200) {
+                if (coinsDummy >= 500 && data.ECS3Bought === false) {
                     buyECSB.className = "pointer"
-                    buyEPRSB.className = "pointer"
+                } else if (coinsDummy >= 300 && data.ECS2Bought === false) {
+                    buyECSB.className = "pointer"
+                } else if (coinsDummy >= 200 && data.ECS1Bought === false) {
+                    buyECSB.className = "pointer"
                 } else {
                     buyECSB.className = "notAllowed"
+                }
+
+                if (coinsDummy >= 500 && data.EPRS3Bought === false) {
+                    buyEPRSB.className = "pointer"
+                } else if (coinsDummy >= 300 && data.EPRS2Bought === false) {
+                    buyEPRSB.className = "pointer"
+                } else if (coinsDummy >= 200 && data.EPRS1Bought === false) {
+                    buyEPRSB.className = "pointer"
+                } else {
                     buyEPRSB.className = "notAllowed"
                 }
 
@@ -704,6 +727,14 @@
                     activateEPRSB.value = "Activate Emergency Pressure Relief System (level 1)"
                     activateEPRSB.removeAttribute("disabled")
                     activateEPRSB.className = "pointer"
+                }
+
+                if (!data.ECSAvailable) {
+                    setECSCooldown(true)
+                }
+
+                if (!data.EPRSAvailable) {
+                    setEPRSCooldown(true)
                 }
 
                 mainloopID = setInterval(mainloop, 1000)
