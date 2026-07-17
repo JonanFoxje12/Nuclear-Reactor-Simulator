@@ -13,6 +13,7 @@ Changelog started at 13-5-2026
 - More shop items
 - If you have any ideas, post them as an issue!
 - Quick tutorial
+- Dark mode support
 
 ## Bug fixes (15 July 2026 ): bug fixes
 - I found a lot of bugs, and fixed them. If you still find bugs, please report them.
