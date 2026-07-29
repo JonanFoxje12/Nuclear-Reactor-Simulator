@@ -18,6 +18,7 @@ If you have any ideas, post them as an issue!
 ## Tutorial (29 July 2026): update
 - Added tutorial
 - Added dark mode support
+- Added "Inspired by"
 
 ## Bug fixes (15 July 2026): bug fixes
 - When the simulator was closed/refreshed while a backup-system was on cooldown, the backup-system would get stuck and unusable. That's now fixed.
