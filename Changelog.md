@@ -15,8 +15,13 @@ Changelog started at 13-5-2026
 - Quick tutorial
 - Dark mode support
 
+## Tutorial (29 July 2026): update
+- Added tutorial
+- Added dark mode support
+
 ## Bug fixes (15 July 2026 ): bug fixes
-- I found a lot of bugs, and fixed them. If you still find bugs, please report them.
+- When the simulator was closed/refreshed while a backup-system was on cooldown, the backup-system would get stuck and unusable. That's now fixed.
+- Some other bug fixes
 - Updated the manuals
 - Changed the dates in the changelog from "13th of May" to "13 May"
 
