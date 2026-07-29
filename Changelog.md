@@ -19,7 +19,7 @@ If you have any ideas, post them as an issue!
 - Added tutorial
 - Added dark mode support
 
-## Bug fixes (15 July 2026 ): bug fixes
+## Bug fixes (15 July 2026): bug fixes
 - When the simulator was closed/refreshed while a backup-system was on cooldown, the backup-system would get stuck and unusable. That's now fixed.
 - Some other bug fixes
 - Updated the manuals
