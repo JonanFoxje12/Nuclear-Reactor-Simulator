@@ -3,6 +3,8 @@
 <html>
     <head>
         <title>Nuclear Reactor Simulator</title>
+        <meta charset="utf-8">
+        <meta name="color-scheme" content="light dark">
         <style>
             p {
                 line-height: 0.1;
@@ -67,6 +69,111 @@
             #manualLink {
                 cursor: help;
             }
+
+            /* Tutorial */
+            .marked {
+                display: inline-block;
+                padding: 10px;
+                background-color: #ffff00;
+            }
+
+            #tempTuto {
+                position: absolute;
+                top: 225px;
+                left: 250px;
+                background-color: #070090;
+                border-radius: 10px;
+                width: fit-content;
+                padding: 10px;
+                z-index: 1;
+            }
+
+            #presTuto {
+                position: absolute;
+                top: 250px;
+                left: 250px;
+                background-color: #070090;
+                border-radius: 10px;
+                width: fit-content;
+                padding: 10px;
+                z-index: 1;
+            }
+
+            #rodsTuto {
+                position: absolute;
+                top: 550px;
+                left: 100px;
+                background-color: #070090;
+                border-radius: 10px;
+                width: fit-content;
+                padding: 10px;
+                z-index: 1;
+            }
+
+            #turbinesTuto {
+                position: absolute;
+                top: 550px;
+                left: 160px;
+                background-color: #070090;
+                border-radius: 10px;
+                width: fit-content;
+                padding: 10px;
+                z-index: 1;
+            }
+
+            #errorPanelTuto {
+                position: absolute;
+                top: 850px;
+                left: 265px;
+                background-color: #070090;
+                border-radius: 10px;
+                width: fit-content;
+                padding: 10px;
+                z-index: 1;
+            }
+
+            #backupTuto {
+                position: absolute;
+                top: 1130px;
+                left: 375px;
+                background-color: #070090;
+                border-radius: 10px;
+                width: fit-content;
+                padding: 10px;
+                z-index: 1;
+            }
+
+            #shopTuto {
+                position: absolute;
+                top: 1310px;
+                left: 450px;
+                background-color: #070090;
+                border-radius: 10px;
+                width: fit-content;
+                padding: 10px;
+                z-index: 1;
+            }   
+
+            #manualTuto {
+                position: absolute;
+                top: 1375px;
+                left: 450px;
+                background-color: #070090;
+                border-radius: 10px;
+                width: fit-content;
+                padding: 10px;
+                z-index: 1;
+            }
+
+            #tempTuto p, #presTuto p, #rodsTuto p, #turbinesTuto p, #errorPanelTuto p, #backupTuto p, #shopTuto p, #manualTuto p {
+                color: #ffff99;
+                line-height: revert;
+            }
+
+            #skipTutoB, #tempTutoOK, #presTutoOK, #rodsTutoOK, #turbinesTutoOK, #errorPanelTutoOK, #backupTutoOK, #shopTutoOK, #manualTutoOK {
+                background-color: #ffff99;
+                cursor: pointer;
+            }
         </style>
     </head>
     <body>
@@ -79,9 +186,20 @@
             <p>Total generated power:&nbsp;</p><p id="generatedShowO">0</p><p>&nbsp;kW</p><br>
             <p>Coins:&nbsp;</p><p id="coinsShowO">0</p><br>
             <p>Rods:&nbsp;</p><p id="rodsShowO">100</p><p>% down</p><br>
-            <p>Reactor temperature:&nbsp;</p><p id="temperatureShowO">20</p><p>°C</p><br>
-            <p>Reactor pressure:&nbsp;</p><p id="pressureShowO">0</p><p>&nbsp;bar</p><br>
+            <p>Reactor temperature:&nbsp;</p><p id="temperatureShowO" name="temperatureGauge">20</p><p>°C</p><br>
+            <p>Reactor pressure:&nbsp;</p><p id="pressureShowO" name="pressureGauge">0</p><p>&nbsp;bar</p><br>
         </fieldset>
+
+        <div id="tempTuto" style="display: none;">
+            <p>There are 2 gauges for the temperature. They are both the same, it doesn't matter which one you look at. <br> This is one of the gauges, the other is further down on the page. <br> It's important to keep an eye on the temperature gauges to prevent a meltdown.</p><br>
+            <input type="button" value="OK" id="tempTutoOK" onclick="hideTempTuto()">
+            <input type="button" value="Skip tutorial" id="skipTutoB" onclick="skipTuto()">
+        </div>
+
+        <div id="presTuto" style="display: none;">
+            <p>There are 2 gauges for the pressure. They are both the same, it doesn't matter which one you look at. <br> This is one of the gauges, the other is further down on the page.  <br> It's important to keep an eye on the pressure gauges to prevent a meltdown.</p><br>
+            <input type="button" value="OK" id="presTutoOK" onclick="hidePresTuto()">
+        </div>
 
         <fieldset>
             <legend>Rods & Turbines</legend>
@@ -89,14 +207,14 @@
             <p>Turbine power:&nbsp;</p><p id="turbineShow">0</p><p>%</p><br>
             <p>Turbine temperature:&nbsp;</p><p id="turbineTemperatureShow">0</p><p>°C</p><br>
             <p>Generating power:&nbsp;</p><p id="generationShow">0</p><p>&nbsp;MWh</p><br>
-            <div class="ib">
+            <div class="ib" id="rodsDIV">
                 <p>Rods</p><br>
                 <input type="button" value="-" id="decreaseRodsB" onclick="decreaseRods()">
                 <input type="button" value="+" id="increaseRodsB" onclick="increaseRods()"><br>
                 <input type="range" id="rodsInput" min="0" max="100" value="100" onchange="rodsChanged()">
                 <br><p id="rodsShowDIV">100</p><p>%</p>
             </div>
-            <div class="ib">
+            <div class="ib" id="turbinesDIV">
                 <p>Turbines</p><br>
                 <input type="button" value="-" id="decreaseTurbinesB" onclick="decreaseTurbines()">
                 <input type="button" value="+" id="increaseTurbinesB" onclick="increaseTurbines()"><br>
@@ -104,6 +222,15 @@
                 <br><p id="turbineShowDIV">0</p><p>%</p>
             </div>
         </fieldset>
+        <div id="rodsTuto" style="display: none;">
+            <p>This is the lever for control of the rods. The further you raise them, the more the temperature and pressure will rise. <br> If there are full down, the temperature will be stable and the pressure will be falling, due to natural pressure loss. <br> If the temperature exceeds 2000 degrees or if the pressure exceeds 250 bar, there is a meltdown. The game will restart then. <br> Your progress (generated power, coins, upgrades) will be lost.</p><br>
+            <input type="button" value="OK" id="rodsTutoOK" onclick="hideRodsTuto()">
+        </div>
+
+        <div id="turbinesTuto" style="display: none;">
+            <p>This is the lever for control of the turbines. If you raise them, the power of the turbines will raise as well. <br> The turbines will decrease temperature and pressure and convert them to power. The max energy production is 25MWh. <br> The turbines only generate power when there is temperature and pressure to decrease. When turbines generate power, their own temperature rises. When this happens, you also get coins. <br> If the temperature of the turbines gets too high, they will stop working.</p><br>
+            <input type="button" value="OK" id="turbinesTutoOK" onclick="hideTurbinesTuto()">
+        </div>
 
         <fieldset class="noError">
             <legend class="defaultLegend">Error panel</legend>
@@ -122,19 +249,29 @@
             <p id="meltdown">MELTDOWN</p>
         </fieldset>
 
+        <div id="errorPanelTuto" style="display: none;">
+            <p>This is the error panel. When an error lights up, something goes wrong. <br> To see what goes wrong and how to solve it, see the "Error panel" chapter in the manual (comes  at the end of tutorial).</p><br>
+            <input type="button" value="OK" id="turbinesTutoOK" onclick="hideErrorPanelTuto()">
+        </div>
+
         <fieldset>
             <legend>Reactor temperature</legend>
-            <p>Temperature:&nbsp;</p><p id="temperatureShow">20</p><p>°C</p><br>
+            <p>Temperature:&nbsp;</p><p id="temperatureShow" name="temperatureGauge">20</p><p>°C</p><br>
             <input type="button" value="Activate Emergency Cooling System (level 1)" id="activateECSB" class="notAllowed" onclick="activateECS()" disabled><br>
             <p>Cooldown:&nbsp;</p><p id="ECSCooldown">60</p>
         </fieldset>
 
         <fieldset>
             <legend>Pressure</legend>
-            <p>Reactor pressure:&nbsp;</p><p id="pressureShow">0</p><p>&nbsp;bar</p><br>
+            <p>Reactor pressure:&nbsp;</p><p id="pressureShow" name="pressureGauge">0</p><p>&nbsp;bar</p><br>
             <input type="button" value="Activate Emergency Pressure Relieve System (level 1)" id="activateEPRSB" class="notAllowed" onclick="activateEPRS()" disabled><br>
             <p>Cooldown:&nbsp;</p><p id="EPRSCooldown">60</p>
         </fieldset>
+
+        <div id="backupTuto" style="display: none;">
+            <p>This are the emergency backups. You can use them to quickly decrease the temperature or pressure in case of very high temperature or pressure. <br> However, you need to buy them with coins in the shop before you can use them. <br> The more you upgrade them, the more temperature or pressure they decrease.</p><br>
+            <input type="button" value="OK" id="backupTutoOK" onclick="hideBackupTuto()">
+        </div>
 
         <fieldset>
             <legend>Shop</legend>
@@ -142,13 +279,38 @@
             <input type="button" value="Buy Emergency Pressure Relieve System (level 1) for 200 coins" id="buyEPRSB" onclick="buyEPRS()">
         </fieldset>
 
+        <div id="shopTuto" style="display: none;">
+            <p>This is the shop, here you can spend your money to buy backup systems.</p><br>
+            <input type="button" value="OK" id="shopTutoOK" onclick="hideShopTuto()">
+        </div>
+
         <fieldset>
             <legend>Manual</legend>
-            <a href="Manual.html" target="_blank"><input type="button" value="Open Manual" id="manualLink"></a>
+            <input type="button" value="Start tutorial" onclick="startTutorial()"><br>
+            <a href="Manual.html" target="_blank"><input type="button" value="Open full manual" id="manualLink"></a>
         </fieldset>
+
+        <div id="manualTuto" style="display: none;">
+            <p>At last, if you ever want to replay the tutorial, click "Start tutorial". <br> If you want to view the full manual with more details, click "Open full manual". <br> This was the tutorial, have fun!</p><br>
+            <input type="button" value="Finish tutorial" id="manualTutoOK" onclick="hideManualTuto()">
+        </div>
+
+        <p>Inspired by <a href="https://www.roblox.com/games/106887760461131/Reactor-Labs" target="_blank">Reactor Labs, Roblox</a></p>
 
         <script>
             const alarm = document.getElementById("alarm");
+
+            const temperatureGauges = document.getElementsByName("temperatureGauge");
+            const pressureGauges = document.getElementsByName("pressureGauge");
+
+            const tempTuto = document.getElementById("tempTuto");
+            const presTuto = document.getElementById("presTuto");
+            const rodsTuto = document.getElementById("rodsTuto");
+            const turbinesTuto = document.getElementById("turbinesTuto");
+            const errorPanelTuto = document.getElementById("errorPanelTuto");
+            const backupTuto = document.getElementById("backupTuto");
+            const shopTuto = document.getElementById("shopTuto");
+            const manualTuto = document.getElementById("manualTuto");
 
             const overheat = document.getElementById("overheat");
             const criticalOverheat = document.getElementById("criticalOverheat");
@@ -200,6 +362,8 @@
             let ECSCooldownID
             let EPRSCooldownID
 
+            startTutorial()
+
             let data = {
                 temperature: 20,
                 pressure: 0,
@@ -219,7 +383,107 @@
                 EPRS1Bought: false,
                 EPRS2Bought: false,
                 EPRS3Bought: false,
-                alarmStarted: false
+                alarmStarted: false,
+                tutorialFinished: false
+            }
+
+            function skipTuto() {
+                tempTuto.style.display = "none";
+                for (gauge of temperatureGauges) {
+                    gauge.className = ""
+                }
+
+                data.tutorialFinished = true;
+                save()
+            }
+
+            function startTutorial() {
+                tempTuto.style.display = "inline-block";
+                for (gauge of temperatureGauges) {
+                    gauge.className = "marked";
+                }
+
+                presTuto.style.display = "none";
+                for (gauge of pressureGauges) {
+                    gauge.className = ""
+                }
+
+                rodsTuto.style.display = "none";
+                document.getElementById("rodsDIV").className = "ib";
+
+                turbinesTuto.style.display = "none";
+                document.getElementById("turbinesDIV").className = "ib";
+
+                errorPanelTuto.style.display = "none";
+
+                backupTuto.style.display = "none";
+
+                shopTuto.style.display = "none";
+
+                manualTuto.style.display = "none"
+            }
+
+            function hideTempTuto() {
+                tempTuto.style.display = "none";
+                for (gauge of temperatureGauges) {
+                    gauge.className = "";
+                }
+
+                presTuto.style.display = "inline-block";
+                for (gauge of pressureGauges) {
+                    gauge.className = "marked";
+                }
+            }
+
+            function hidePresTuto() {
+                presTuto.style.display = "none";
+                for (gauge of pressureGauges) {
+                    gauge.className = "";
+                }
+
+                rodsTuto.style.display = "inline-block";
+                document.getElementById("rodsDIV").className = "marked";
+            }
+
+            function hideRodsTuto() {
+                rodsTuto.style.display = "none"
+                document.getElementById("rodsDIV").className = "ib";
+
+                turbinesTuto.style.display = "inline-block";
+                document.getElementById("turbinesDIV").className = "marked";
+            }
+
+            function hideTurbinesTuto() {
+                turbinesTuto.style.display = "none";
+                document.getElementById("turbinesDIV").className = "ib";
+
+                errorPanelTuto.style.display = "inline-block";
+                errorPanelTuto.scrollIntoView();
+            }
+
+            function hideErrorPanelTuto() {
+                errorPanelTuto.style.display = "none";
+
+                backupTuto.style.display = "inline-block";
+            }
+
+            function hideBackupTuto () {
+                backupTuto.style.display = "none";
+
+                shopTuto.style.display = "inline-block";
+            }
+
+            function hideShopTuto() {
+                shopTuto.style.display = "none";
+
+                manualTuto.style.display = "inline-block";
+            }
+
+            function hideManualTuto() {
+                manualTuto.style.display = "none";
+
+                data.tutorialFinished = true
+                save()
             }
 
             function startAlarm() {
@@ -691,6 +955,14 @@
 
                 if (data.EPRS3Bought == null) {
                     data.EPRS3Bought = false
+                }
+
+                if (data.tutorialFinished == null) {
+                    data.tutorialFinished = false
+                }
+
+                if (!data.tutorialFinished) {
+                    // startTutorial()
                 }
 
                 save()
