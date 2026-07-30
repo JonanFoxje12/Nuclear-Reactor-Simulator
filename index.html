@@ -66,7 +66,7 @@
                 color: red
             }
 
-            #manualLink {
+            #manualLink, #startTuto {
                 cursor: help;
             }
 
@@ -286,7 +286,7 @@
 
         <fieldset>
             <legend>Manual</legend>
-            <input type="button" value="Start tutorial" onclick="startTutorial()"><br>
+            <input type="button" value="Start tutorial" id="startTuto" onclick="startTutorial()"><br>
             <a href="Manual.html" target="_blank"><input type="button" value="Open full manual" id="manualLink"></a>
         </fieldset>
 
@@ -361,8 +361,6 @@
             let autoSaveID
             let ECSCooldownID
             let EPRSCooldownID
-
-            startTutorial()
 
             let data = {
                 temperature: 20,
