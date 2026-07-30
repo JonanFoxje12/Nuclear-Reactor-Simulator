@@ -15,6 +15,9 @@ Changelog started at 13-5-2026
 - [ ] More shop items 
 If you have any ideas, post them as an issue!
 
+## Bug fixes (30 July 2026): bug fixes
+- The tutorial started every time the user opened the simulator.
+
 ## Tutorial (29 July 2026): update
 - Added tutorial
 - Added dark mode support
