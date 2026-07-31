@@ -12,7 +12,8 @@ Changelog started at 13-5-2026
 - [x] Quick tutorial
 - [x] Dark mode support
 - [ ] SCRAM upgrade (for in the shop)
-- [ ] More shop items 
+- [ ] More shop items
+
 If you have any ideas, post them as an issue!
 
 ## Bug fixes (30 July 2026): bug fixes
