@@ -32,7 +32,7 @@ If you have any ideas, post them as an issue!
 - Changed the dates in the changelog from "13th of May" to "13 May"
 
 ## Backup-system update (28 May 2026): big update
-- There are upgrades for the backup-systes available
+- There are upgrades for the backup-systems available
 - Improved save and load system for when players plays again after update
 - Turbine temperature limit increased
 - Updated the manual
