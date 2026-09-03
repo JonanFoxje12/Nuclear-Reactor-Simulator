@@ -184,7 +184,7 @@
                 z-index: 1;
             }
 
-            #backupTuto {
+            #backupTuto, #SCRAMTuto {
                 position: absolute;
                 top: 1130px;
                 left: 375px;
@@ -217,12 +217,12 @@
                 z-index: 1;
             }
 
-            #tempTuto p, #presTuto p, #rodsTuto p, #turbinesTuto p, #errorPanelTuto p, #backupTuto p, #shopTuto p, #manualTuto p {
+            #tempTuto p, #presTuto p, #rodsTuto p, #turbinesTuto p, #errorPanelTuto p, #backupTuto p, #SCRAMTuto p, #shopTuto p, #manualTuto p {
                 color: #ffff99;
                 line-height: revert;
             }
 
-            #skipTutoB, #tempTutoOK, #presTutoOK, #rodsTutoOK, #turbinesTutoOK, #errorPanelTutoOK, #backupTutoOK, #shopTutoOK, #manualTutoOK {
+            #skipTutoB, #tempTutoOK, #presTutoOK, #rodsTutoOK, #turbinesTutoOK, #errorPanelTutoOK, #backupTutoOK, #SCRAMTutoOK, #shopTutoOK, #manualTutoOK {
                 background-color: #ffff99;
                 cursor: pointer;
             }
@@ -337,6 +337,11 @@
             <input type="button" value="OK" id="backupTutoOK" onclick="hideBackupTuto()">
         </div>
 
+        <div id="SCRAMTuto" style="display: none;">
+            <p>One of the systems you can buy is the SCRAM, the emergency shutdown. The SCRAM can be purchased in the shop for 1000 coins. It's important to know that <ins>every time you use the SCRAM</ins>, you pay 200 coins. The SCRAM immediatly shutsdown the reactor, but locks the rods at 100% and the turbines and at 0%. After having used the SCRAM, you can restart the reactor. This takes 30 minutes, this is why the SCRAM should only be used in case of absolute emergency.</p>
+            <input type="button" value="OK" id="SCRAMTutoOK" onclick="hideSCRAMTuto()">
+        </div>
+
         <fieldset>
             <legend>Shop</legend>
             <input type="button" value="Buy Emergency Cooling System (level 1) for 200 coins" id="buyECSB" onclick="buyECS()"><br>
@@ -374,6 +379,7 @@
             const turbinesTuto = document.getElementById("turbinesTuto");
             const errorPanelTuto = document.getElementById("errorPanelTuto");
             const backupTuto = document.getElementById("backupTuto");
+            const SCRAMTuto = document.getElementById("SCRAMTuto");
             const shopTuto = document.getElementById("shopTuto");
             const manualTuto = document.getElementById("manualTuto");
 
@@ -548,8 +554,14 @@
                 backupTuto.style.display = "inline-block";
             }
 
-            function hideBackupTuto () {
+            function hideBackupTuto() {
                 backupTuto.style.display = "none";
+
+                SCRAMTuto.style.display = "inline-block";
+            }
+
+            function hideSCRAMTuto() {
+                SCRAMTuto.style.display = "none";
 
                 shopTuto.style.display = "inline-block";
             }
