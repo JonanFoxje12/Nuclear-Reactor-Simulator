@@ -1111,6 +1111,112 @@
                 console.log("Init started")
                 data = JSON.parse(localStorage.getItem("dataNRS"))
 
+                if (data == null) {
+                        data = {}
+
+                        data.temperature = 20
+                    
+
+                    
+                        data.pressure = 0
+                    
+                    
+                    
+                        data.rods = 100
+                    
+
+                    
+                        data.turbines = 0
+                    
+
+                    
+                        data.turbineTemperature = 0
+                    
+
+                    
+                        data.generation = 0
+                    
+
+                    
+                        data.generated = 0
+                    
+
+                    
+                        data.coins = 0
+                    
+
+                    
+                        data.ECSAvailable = true
+                    
+
+                    
+                        data.EPRSAvailable = true
+                    
+
+                    
+                        data.SCRAMActivated = false
+                    
+
+                    
+                        data.startupActivated = false
+                    
+
+                    
+                        data.startupTimer = 1800
+                    
+
+                    
+                        data.lastCountdownStartup = new Date(data.lastCountdownStartup)
+                    
+
+                    
+                        data.ECSTimer = 300
+                    
+
+                    
+                        data.lastCountdownECS = new Date(data.lastCountdownECS)
+                    
+
+                    
+                        data.EPRSTimer = 300
+                    
+
+                    
+                        data.lastCountdownEPRS = new Date(data.lastCountdownEPRS)
+                    
+
+                    
+                        data.ECS1Bought = false
+                    
+
+                    
+                        data.ECS2Bought = false
+                    
+
+                    
+                        data.ECS3Bought = false
+                    
+
+                    
+                        data.EPRS1Bought = false
+                    
+
+                    
+                        data.EPRS2Bought = false
+                    
+
+                    
+                        data.EPRS3Bought = false
+                    
+
+                    
+                        data.SCRAMBought = false
+                    
+
+                    
+                        data.tutorialFinished = false
+                }
+
                 if (data.temperature == null) {
                     data.temperature = 20
                 }
