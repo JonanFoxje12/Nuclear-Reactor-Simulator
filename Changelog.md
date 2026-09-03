@@ -14,7 +14,7 @@ Changelog started at 13-5-2026
 - [x] SCRAM upgrade (for in the shop) <br>
 If you have any ideas, post them as an issue! <br>
 
-## SCRAM update (September 3th 2026): big update
+## SCRAM update (September 3rd 2026): big update
 - Added SCRAM
 - Added SCRAM to the tutorial
 - Updated the manual
