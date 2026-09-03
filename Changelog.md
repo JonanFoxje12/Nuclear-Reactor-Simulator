@@ -8,11 +8,10 @@ Changelog started at 13-5-2026
 5. Mayor Update
 
 ### Still working on
-[x] Upgrades for backup-systems <br>
-[x] Quick tutorial <br>
-[x] Dark mode support <br>
-[x] SCRAM upgrade (for in the shop) <br>
-[ ] More shop items <br>
+- [x] Upgrades for backup-systems <br>
+- [x] Quick tutorial <br>
+- [x] Dark mode support <br>
+- [x] SCRAM upgrade (for in the shop) <br>
 If you have any ideas, post them as an issue! <br>
 
 ## SCRAM update (September 3th 2026): big update
