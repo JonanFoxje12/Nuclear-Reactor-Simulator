@@ -36,6 +36,7 @@
                 background-color: #4287f5;
                 position: relative;
                 top: 8px;
+                color: black;
             }
 
             #activateECSB2.active, #activateEPRSB2.active {
@@ -53,7 +54,6 @@
                 position: relative;
                 top: 12px;
                 font-size: 9px;
-                color: black;
             }
 
             #activateSCRAMB {
@@ -1110,6 +1110,10 @@
             function init() {
                 console.log("Init started")
                 data = JSON.parse(localStorage.getItem("dataNRS"))
+
+                if (data == null) {
+                    data = {}
+                }
 
                 if (data.temperature == null) {
                     data.temperature = 20
