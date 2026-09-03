@@ -27,7 +27,7 @@
         
         <h3>Backup system: Emergency Cooling System</h3>
         <p>This is a backup system that needs to be purchased in the shop. To buy for example the level 2 ECS, you need level 1 ECS too.
-        The system has a cooldown of 1 minute and is active during 4 seconds. In the table below is shown how much the ECS will lower the
+        The system has a cooldown of 5 minutes and is active during 4 seconds. In the table below is shown how much the ECS will lower the
         temperature and how much it costs:</p>
         <table>
             <tr>
@@ -58,7 +58,7 @@
 
         <h3>Backup system: Emergency Pressure Relief System</h3>
         <p>This is a backup system that needs to be purchased in the shop. To buy for example the level 2 EPRS, you need level 1 EPRS too.
-        The system has a cooldown of 1 minute and is active during 4 seconds. In the table below is shown how much the EPRS will lower the
+        The system has a cooldown of 5 minutes and is active during 4 seconds. In the table below is shown how much the EPRS will lower the
         temperature and how much it costs:</p>
 
         <table>
@@ -87,6 +87,12 @@
                 <td>105.2 bar</td>
             </tr>
         </table>
+        <h3>SCRAM</h3>
+        <p>The SCRAM button is the emergency shutdown and can be purchased in the shop for 1000 coins.
+        <b>Note that <ins>EVERY TIME YOU USE THE SCRAM</ins> you pay 200 coins, <ins>if you don't have 200 coins, 
+        you can't use the SCRAM</ins></b>. The SCRAM immediatly shutsdown the reactor, but locks the rods at 100% and the turbines and at 
+        0%. After having used the SCRAM, you can restart the reactor. This takes 30 minutes, this is why the SCRAM should only be used in
+        case of absolute emergency.</p>
         
         <h2>Error panel</h2>
         <p>The error panel is a usefull item in the simulator that shows you when things are getting dangerous. The meaning of each error
@@ -113,15 +119,15 @@
         How to: lower rods, increase turbine power and if possible, activate emergency pressure relieve system.</p>
 
         <h3>TURBINE OVERHEAT</h3>
-        <p>Reason: turbine temperature is higher than 150°C <br>
+        <p>Reason: turbine temperature is higher than 400°C <br>
         What you should do: lower the turbine power</p>
 
         <h3>TURBINE CRITICAL</h3>
-        <p>Reason: turbine temperature is higher than 175°C <br>
+        <p>Reason: turbine temperature is higher than 450°C <br>
         What you should do: lower the turbine power greatly</p>
 
         <h3>TURBINE NOT FUNCTIONAL</h3>
-        <p>Reason: turbine temperature higher than 200°C <br>
+        <p>Reason: turbine temperature higher than 500°C <br>
         What you should do: shutdown the turbine <br>
         How to: drag the turbine power to 0.</p>
 
