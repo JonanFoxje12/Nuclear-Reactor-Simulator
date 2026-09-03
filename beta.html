@@ -276,10 +276,10 @@
             <div class="ib" id="scramDIV">
                 <button id="activateSCRAMB" onclick="activateSCRAM()">SCRAM<br>(200 coins)</button>
                 <button id="activateStartupB" onclick="activateStartup()" disabled>Restart reactor</button><br>
-                <label for="startupTimerShowM">Restart completed in: </label>
-                <p id="startupTimerShowM" class="ib">00</p>
-                <p class="ib">:</p>
-                <p id="startupTimerShowS" class="ib">00</p>
+                <label for="startupTimerShowM" name="startupTimerShow">Restart completed in: </label>
+                <p id="startupTimerShowM" name="startupTimerShow" class="ib">00</p>
+                <p name="startupTimerShow" class="ib">:</p>
+                <p id="startupTimerShowS" name="startupTimerShow" class="ib">00</p>
             </div>
             <div class="ib" id="EBSDIV">
                 <button id="activateECSB2" onclick="activateECS()" disabled>ECS 1</button>
@@ -409,6 +409,7 @@
             const turbineTemperatureShow = document.getElementById("turbineTemperatureShow");
             const generationShow = document.getElementById("generationShow");
 
+            const startupTimerShow = documents.getElementsByName("startupTimerShow");
             const startupTimerShowM = document.getElementById("startupTimerShowM");
             const startupTimerShowS = document.getElementById("startupTimerShowS");
             const activateStartupB = document.getElementById("activateStartupB")
@@ -641,6 +642,9 @@
                     data.SCRAMBought = true
                     activateSCRAMB.style.display = "";
                     activateStartupB.style.display = "";
+                    startupTimerShow.forEach(text => {
+                        text.style.display = "";
+                    })
                     buySCRAMB.setAttribute("disabled", "disabled");
                 }
             }
@@ -934,7 +938,7 @@
 
                 let dummyTemperature = data.temperature
                 dummyTemperature -= data.turbines * 0.65
-                if (data.turbineTemperature < 200) {
+                if (data.turbineTemperature < 500) {
                     if (dummyTemperature >= 20) {
                         if (data.turbines >= 30) {
                             data.turbineTemperature += data.turbines * 0.05
@@ -1045,15 +1049,15 @@
                     meltdownPressure = false
                 }
 
-                if (data.turbineTemperature >= 200) {
+                if (data.turbineTemperature >= 500) {
                     turbineOverheat.className = "error"
                     turbineCritical.className = "error"
                     turbineNotFunctional.className = "error"
-                } else if (data.turbineTemperature >= 175) {
+                } else if (data.turbineTemperature >= 450) {
                     turbineOverheat.className = "error"
                     turbineCritical.className = "error"
                     turbineNotFunctional.className = "noError"
-                } else if (data.turbineTemperature >= 150) {
+                } else if (data.turbineTemperature >= 400) {
                     turbineOverheat.className = "error"
                     turbineCritical.className = "noError"
                     turbineNotFunctional.className = "noError"
@@ -1254,6 +1258,9 @@
                 } else {
                     activateSCRAMB.style.display = "none";
                     activateStartupB.style.display = "none";
+                    startupTimerShow.forEach(text => {
+                        text.style.display = "none";
+                    });
                 }
 
                 if (!data.ECSAvailable) {
@@ -1413,18 +1420,32 @@
                 pressureShow.textContent = 0
                 turbineTemperatureShow.textContent = 0
                 
-                data.rods = 100
-                data.turbines = 0
                 data.temperature = 20
                 data.pressure = 0
+                data.rods = 100
+                data.turbines = 0
                 data.turbineTemperature = 0
+                data.generation = 0
+                data.generated = 0
                 data.coins = 0
+                data.ECSAvailable = true
+                data.EPRSAvailable = true
+                data.SCRAMActivated = false
+                data.startupActivated = false
+                data.startupTimer = 1800
+                data.lastCountdownStartup = undefined
+                data.ECSTimer = 300
+                data.lastCountdownECS = undefined
+                data.EPRSTimer = 300
+                data.lastCountdownEPRS = undefined
                 data.ECS1Bought = false
                 data.ECS2Bought = false
                 data.ECS3Bought = false
                 data.EPRS1Bought = false
                 data.EPRS2Bought = false
                 data.EPRS3Bought = false
+                data.SCRAMBought = false
+                data.alarmStarted = false
 
                 turbinesInput.setAttribute("disabled", "disabled");
                 decreaseTurbinesB.setAttribute("disabled", "disabled");
@@ -1436,7 +1457,10 @@
                 save()
 
                 activateECSB.setAttribute("disabled", "disabled");
-                activateEPRSB.setAttribute("disabled", "disabled")
+                activateECSB2.setAttribute("disabled", "disabled");
+                activateEPRSB.setAttribute("disabled", "disabled");
+                activateEPRSB2.setAttribute("disabled", "disabled");
+                activateSCRAMB.setAttribute("disabled", "disabled");
 
                 overheat.className = "noError"
                 criticalOverheat.className = "noError"
