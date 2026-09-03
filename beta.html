@@ -640,10 +640,10 @@
                 if (!data.SCRAMBought && data.coins >= 1000) {
                     data.coins -= 1000
                     data.SCRAMBought = true
-                    activateSCRAMB.style.display = "";
-                    activateStartupB.style.display = "";
+                    activateSCRAMB.style.visibility = "visible";
+                    activateStartupB.style.visibility = "visible";
                     startupTimerShow.forEach(text => {
-                        text.style.display = "";
+                        text.style.visibility = "visible";
                     })
                     buySCRAMB.setAttribute("disabled", "disabled");
                 }
@@ -1256,10 +1256,10 @@
                 if (data.SCRAMBought) {
                     buySCRAMB.setAttribute("disabled", "disabled")
                 } else {
-                    activateSCRAMB.style.display = "none";
-                    activateStartupB.style.display = "none";
+                    activateSCRAMB.style.visibility = "hidden";
+                    activateStartupB.style.visibility = "hidden";
                     startupTimerShow.forEach(text => {
-                        text.style.display = "none";
+                        text.style.visibility = "hidden";
                     });
                 }
 
