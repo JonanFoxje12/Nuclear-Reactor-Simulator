@@ -18,7 +18,7 @@ If you have any ideas, post them as an issue!
 ## Bug fixes (September 3rd 2026): bug fixes
 - There was a bug about the data object when a user would open for the first time
 
-## SCRAM update (September 3rd 2026): big update
+## SCRAM (September 3rd 2026): big update
 - Added SCRAM
 - Added SCRAM to the tutorial
 - Updated the manual
