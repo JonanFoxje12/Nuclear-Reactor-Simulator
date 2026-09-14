@@ -118,6 +118,52 @@
                 color: red
             }
 
+            #settingsB {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background-color: rgba(0, 0, 0, 0);
+                border-style: none;
+                cursor: pointer;
+            }
+
+            #settingsDIV {
+                position: fixed;
+                z-index: 3;
+                width: 1000px;
+                height: 500px;
+                background-color: white;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                border-radius: 10px;
+                padding: 15px 25px;
+            }
+
+            #closeSettingsB {
+                position: absolute;
+                border-style: none;
+                background-color: white;
+                right: 10px;
+                top: 10px;
+                font-size: 30px;
+                cursor: pointer;
+            }
+
+            #settingsBackgroundDIV {
+                position: fixed;
+                inset: 0;
+                z-index: 2;
+                width: calc(100vw - 15px);
+                height: 100vh;
+                background-color: rgba(0, 0, 0, 0.5);
+            }
+
+            .keybindInput {
+                height: 25px;
+                width: 75px;
+            }
+
             #manualLink, #startTuto {
                 cursor: help;
             }
@@ -173,6 +219,17 @@
                 z-index: 1;
             }
 
+            #settingsTuto {
+                position: absolute;
+                top: 550px;
+                left: 300px;
+                background-color: #070090;
+                border-radius: 10px;
+                width: fit-content;
+                padding: 10px;
+                z-index: 1;
+            }
+
             #errorPanelTuto {
                 position: absolute;
                 top: 850px;
@@ -217,12 +274,12 @@
                 z-index: 1;
             }
 
-            #tempTuto p, #presTuto p, #rodsTuto p, #turbinesTuto p, #errorPanelTuto p, #backupTuto p, #SCRAMTuto p, #shopTuto p, #manualTuto p {
+            #tempTuto p, #presTuto p, #rodsTuto p, #turbinesTuto p, #settingsTuto p, #errorPanelTuto p, #backupTuto p, #SCRAMTuto p, #shopTuto p, #manualTuto p {
                 color: #ffff99;
                 line-height: revert;
             }
 
-            #skipTutoB, #tempTutoOK, #presTutoOK, #rodsTutoOK, #turbinesTutoOK, #errorPanelTutoOK, #backupTutoOK, #SCRAMTutoOK, #shopTutoOK, #manualTutoOK {
+            .tutoOK, #skipTutoB {
                 background-color: #ffff99;
                 cursor: pointer;
             }
@@ -231,6 +288,46 @@
     <body>
         <h1>Nuclear Reactor Simulator</h1>
         <audio src="NuclearAlarmSiren.mp3" id="alarm"></audio>
+        <button id="settingsB" onclick="openSettings()"><img src="settingIcon.jpg" alt="SettingIcon" draggable="false" width="50px"></button>
+        
+        <div id="settingsDIV" hidden>
+            <input type="button" value="×" id="closeSettingsB" onclick="closeSettings()">
+            <h1>Settings</h1>
+            <h2>Keybinds</h2>
+            <p>Click an input box and then hit the key you want to set as keybind.</p><br>
+
+            <b><ins>Rods</ins></b><br>
+            <label for="increaseRodsKeyI">Lower rods (increase %):&nbsp;</label>
+            <input type="text" id="increaseRodsKeyI" class="keybindInput"><br>
+
+            <label for="decreaseRodsKeyI">Raise rods (decrease %):&nbsp;</label>
+            <input type="text" id="decreaseRodsKeyI" class="keybindInput"><br>
+
+            <label for="changeByRodsI">Change rods by:&nbsp;</label>
+            <input type="number" id="changeByRodsI" min="1" max="100"><br><br>
+
+            <b><ins>Turbines</ins></b><br>
+            <label for="increaseTurbinesKeyI">Increase turbines:&nbsp;</label>
+            <input type="text" id="increaseTurbinesKeyI" class="keybindInput"><br>
+
+            <label for="decreaseTurbinesKeyI">Decrease turbines:&nbsp;</label>
+            <input type="text" id="decreaseTurbinesKeyI" class="keybindInput"><br>
+
+            <label for="changeByTurbinesI">Change turbines by:&nbsp;</label>
+            <input type="number" id="changeByTurbinesI" min="1" max="100"><br><br>
+
+            <b><ins>Backupsystems</ins></b><br>
+            <label for="activateECSKeyI">ECS:&nbsp;</label>
+            <input type="text" id="activateECSKeyI" class="keybindInput"><br>
+
+            <label for="activateEPRSKeyI">EPRS:&nbsp;</label>
+            <input type="text" id="activateEPRSKeyI" class="keybindInput"><br>
+
+            <label for="activateSCRAMKeyI">SCRAM:&nbsp;</label>
+            <input type="text" id="activateSCRAMKeyI" class="keybindInput"><br>
+        </div>
+        <div id="settingsBackgroundDIV" hidden></div>
+
         <fieldset>
             <legend>Overview</legend>
             <p>Turbine power:&nbsp;</p><p id="turbineShowO">0</p><p>%</p><br>
@@ -244,13 +341,13 @@
 
         <div id="tempTuto" style="display: none;">
             <p>There are 2 gauges for the temperature. They are both the same, it doesn't matter which one you look at. <br> This is one of the gauges, the other is further down on the page. <br> It's important to keep an eye on the temperature gauges to prevent a meltdown.</p><br>
-            <input type="button" value="OK" id="tempTutoOK" onclick="hideTempTuto()">
+            <input type="button" value="OK" class="tutoOK" onclick="hideTempTuto()">
             <input type="button" value="Skip tutorial" id="skipTutoB" onclick="skipTuto()">
         </div>
 
         <div id="presTuto" style="display: none;">
             <p>There are 2 gauges for the pressure. They are both the same, it doesn't matter which one you look at. <br> This is one of the gauges, the other is further down on the page.  <br> It's important to keep an eye on the pressure gauges to prevent a meltdown.</p><br>
-            <input type="button" value="OK" id="presTutoOK" onclick="hidePresTuto()">
+            <input type="button" value="OK" class="tutoOK" onclick="hidePresTuto()">
         </div>
 
         <fieldset>
@@ -288,12 +385,17 @@
         </fieldset>
         <div id="rodsTuto" style="display: none;">
             <p>This is the lever for control of the rods. The further you raise them, the more the temperature and pressure will rise. <br> If there are full down, the temperature will be stable and the pressure will be falling, due to natural pressure loss. <br> If the temperature exceeds 2000 degrees or if the pressure exceeds 250 bar, there is a meltdown. The game will restart then. <br> Your progress (generated power, coins, upgrades) will be lost.</p><br>
-            <input type="button" value="OK" id="rodsTutoOK" onclick="hideRodsTuto()">
+            <input type="button" value="OK" class="tutoOK" onclick="hideRodsTuto()">
         </div>
 
         <div id="turbinesTuto" style="display: none;">
             <p>This is the lever for control of the turbines. If you raise them, the power of the turbines will raise as well. <br> The turbines will decrease temperature and pressure and convert them to power. The max energy production is 25MWh. <br> The turbines only generate power when there is temperature and pressure to decrease. When turbines generate power, their own temperature rises. When this happens, you also get coins. <br> If the temperature of the turbines gets too high, they will stop working.</p><br>
-            <input type="button" value="OK" id="turbinesTutoOK" onclick="hideTurbinesTuto()">
+            <input type="button" value="OK" class="tutoOK" onclick="hideTurbinesTuto()">
+        </div>
+
+        <div id="settingsTuto" style="display: none;">
+            <p>You can also use keybinds instead of the buttons and the levers. Open the settings (top right corner) to view and change the keybinds.</p><br>
+            <input type="button" value="OK" class="tutoOK" onclick="hideSettingsTuto()">
         </div>
 
         <fieldset class="noError">
@@ -315,7 +417,7 @@
 
         <div id="errorPanelTuto" style="display: none;">
             <p>This is the error panel. When an error lights up, something goes wrong. <br> To see what goes wrong and how to solve it, see the "Error panel" chapter in the manual (comes  at the end of tutorial).</p><br>
-            <input type="button" value="OK" id="turbinesTutoOK" onclick="hideErrorPanelTuto()">
+            <input type="button" value="OK" class="tutoOK" onclick="hideErrorPanelTuto()">
         </div>
 
         <fieldset>
@@ -334,12 +436,12 @@
 
         <div id="backupTuto" style="display: none;">
             <p>This are the emergency backups. You can use them to quickly decrease the temperature or pressure in case of very high temperature or pressure. <br> However, you need to buy them with coins in the shop before you can use them. <br> The more you upgrade them, the more temperature or pressure they decrease. <br> There are also two shortcuts for each backup on the control panel.</p><br>
-            <input type="button" value="OK" id="backupTutoOK" onclick="hideBackupTuto()">
+            <input type="button" value="OK" class="tutoOK" onclick="hideBackupTuto()">
         </div>
 
         <div id="SCRAMTuto" style="display: none;">
-            <p>One of the systems you can buy is the SCRAM, the emergency shutdown. The SCRAM can be purchased in the shop for 1000 coins. It's important to know that <ins>every time you use the SCRAM</ins>, you pay 200 coins. The SCRAM immediatly shutsdown the reactor, but locks the rods at 100% and the turbines and at 0%. After having used the SCRAM, you can restart the reactor. This takes 30 minutes, this is why the SCRAM should only be used in case of absolute emergency.</p>
-            <input type="button" value="OK" id="SCRAMTutoOK" onclick="hideSCRAMTuto()">
+            <p>One of the systems you can buy is the SCRAM, the emergency shutdown. The SCRAM can be purchased in the shop for 1000 coins. <br> It's important to know that <ins>every time you use the SCRAM</ins>, you pay 200 coins. The SCRAM immediatly shutsdown the reactor, <br> but locks the rods at 100% and the turbines and at 0%. After having used the SCRAM, you can restart the reactor. <br> This takes 30 minutes, this is why the SCRAM should only be used in case of absolute emergency.</p><br>
+            <input type="button" value="OK" class="tutoOK" onclick="hideSCRAMTuto()">
         </div>
 
         <fieldset>
@@ -351,7 +453,7 @@
 
         <div id="shopTuto" style="display: none;">
             <p>This is the shop, here you can spend your money to buy backup systems.</p><br>
-            <input type="button" value="OK" id="shopTutoOK" onclick="hideShopTuto()">
+            <input type="button" value="OK" class="tutoOK" onclick="hideShopTuto()">
         </div>
 
         <fieldset>
@@ -362,7 +464,7 @@
 
         <div id="manualTuto" style="display: none;">
             <p>At last, if you ever want to replay the tutorial, click "Start tutorial". <br> If you want to view the full manual with more details, click "Open full manual". <br> This was the tutorial, have fun!</p><br>
-            <input type="button" value="Finish tutorial" id="manualTutoOK" onclick="hideManualTuto()">
+            <input type="button" value="Finish tutorial" id="manualTutoOK" class="tutoOK" onclick="hideManualTuto()">
         </div>
 
         <p>Inspired by <a href="https://www.roblox.com/games/106887760461131/Reactor-Labs" target="_blank">Reactor Labs, Roblox</a></p>
@@ -377,6 +479,7 @@
             const presTuto = document.getElementById("presTuto");
             const rodsTuto = document.getElementById("rodsTuto");
             const turbinesTuto = document.getElementById("turbinesTuto");
+            const settingsTuto = document.getElementById("settingsTuto");
             const errorPanelTuto = document.getElementById("errorPanelTuto");
             const backupTuto = document.getElementById("backupTuto");
             const SCRAMTuto = document.getElementById("SCRAMTuto");
@@ -437,11 +540,28 @@
             const ECSCooldown = document.getElementById("ECSCooldown");
             const EPRSCooldown = document.getElementById("EPRSCooldown");
 
+            const settingsDIV = document.getElementById("settingsDIV");
+            const settingsBackgroundDIV = document.getElementById("settingsBackgroundDIV");
+            
+            const increaseRodsKeyI = document.getElementById("increaseRodsKeyI");
+            const decreaseRodsKeyI = document.getElementById("decreaseRodsKeyI");
+            const changeByRodsI = document.getElementById("changeByRodsI");
+
+            const increaseTurbinesKeyI = document.getElementById("increaseTurbinesKeyI");
+            const decreaseTurbinesKeyI = document.getElementById("decreaseTurbinesKeyI");
+            const changeByTurbinesI = document.getElementById("changeByTurbinesI");
+
+            const activateECSKeyI = document.getElementById("activateECSKeyI");
+            const activateEPRSKeyI = document.getElementById("activateEPRSKeyI");
+            const activateSCRAMKeyI = document.getElementById("activateSCRAMKeyI");
+
             let mainloopID
             let autoSaveID
             let ECSCooldownID
             let EPRSCooldownID
             let startupCountdownID
+            let forbiddenKeybinds  = ["Enter", "Backspace", "Escape", "Control", "Shift", "Alt", "AltGraph", "Meta", "Tab", "Unidentified", "Delete", "CapsLock"]
+            let settingsOpened
 
             let data = {
                 temperature: 20,
@@ -470,7 +590,18 @@
                 EPRS3Bought: false,
                 SCRAMBought: false,
                 alarmStarted: false,
-                tutorialFinished: false
+                tutorialFinished: false,
+                settings: {
+                    increaseRodsKey: "s",
+                    decreaseRodsKey: "w",
+                    changeByRods: 1,
+                    increaseTurbines: "e",
+                    decreaseTurbines: "d",
+                    changeByTurbines: 1,
+                    activateECSKey: "r",
+                    activateEPRSKey: "f",
+                    activateSCRAMKey: "a"
+                }
             }
 
             function skipTuto() {
@@ -544,6 +675,12 @@
                 turbinesTuto.style.display = "none";
                 document.getElementById("turbinesDIV").className = "ib";
 
+                settingsTuto.style.display = "inline-block";
+            }
+
+            function hideSettingsTuto() {
+                settingsTuto.style.display = "none";
+
                 errorPanelTuto.style.display = "inline-block";
                 errorPanelTuto.scrollIntoView();
             }
@@ -579,6 +716,18 @@
                 save()
             }
 
+            function openSettings() {
+                settingsDIV.removeAttribute("hidden");
+                settingsBackgroundDIV.removeAttribute("hidden");
+                settingsOpened = true;
+            }
+
+            function closeSettings() {
+                settingsDIV.setAttribute("hidden", "hidden");
+                settingsBackgroundDIV.setAttribute("hidden", "hidden");
+                settingsOpened = false;
+            }
+
             function startAlarm() {
                 if (!data.alarmStarted) {
                     alarm.currentTime = 0
@@ -609,6 +758,22 @@
                 render()
             }
 
+            function decreaseRodsByKey() {
+                let dummyRods = data.rods - data.settings.changeByRods
+                data.rods = Math.max(dummyRods, 0)
+                rodsInput.value = data.rods
+                save()
+                render()
+            }
+
+            function increaseRodsByKey() {
+                let dummyRods = data.rods + data.settings.changeByRods
+                data.rods = Math.min(dummyRods, 100)
+                rodsInput.value = data.rods
+                save()
+                render()
+            }
+
             function rodsChanged() {
                 data.rods = Number(rodsInput.value)
                 save()
@@ -625,6 +790,22 @@
 
             function increaseTurbines() {
                 let dummyTurbines = data.turbines + 1
+                data.turbines = Math.min(dummyTurbines, 100)
+                turbinesInput.value = data.turbines
+                save()
+                render()
+            }
+
+            function decreaseTurbinesByKey() {
+                let dummyTurbines = data.turbines - data.settings.changeByTurbines
+                data.turbines = Math.max(dummyTurbines, 0)
+                turbinesInput.value = data.turbines
+                save()
+                render()
+            }
+
+            function increaseTurbinesByKey() {
+                let dummyTurbines = data.turbines + data.settings.changeByTurbines
                 data.turbines = Math.min(dummyTurbines, 100)
                 turbinesInput.value = data.turbines
                 save()
@@ -723,6 +904,7 @@
                         data.coins -= 200
                         activateECSB.removeAttribute("disabled")
                         activateECSB2.removeAttribute("disabled")
+                        activateECSB2.removeAttribute("hidden")
                         activateECSB.className = "pointer"
                         data.ECS1Bought = true
                         buyECSB.value = "Buy Emergency Cooling System (level 2) for 300 coins"
@@ -837,6 +1019,7 @@
                         data.coins -= 200
                         activateEPRSB.removeAttribute("disabled")
                         activateEPRSB2.removeAttribute("disabled")
+                        activateEPRSB2.removeAttribute("hidden")
                         activateEPRSB.className = "pointer"
                         data.EPRS1Bought = true
                         buyEPRSB.value = "Buy Emergency Pressure Relieve System (level 2) for 300 coins"
@@ -873,7 +1056,7 @@
             }
 
             function activateEPRS() {
-                if (data.EPRSAvailable) {
+                if (data.EPRSAvailable && data.EPRS1Bought) {
                     data.EPRSAvailable = false
                     activateEPRSB.className = "active"
                     activateEPRSB2.className = "active"
@@ -1219,6 +1402,46 @@
                     data.tutorialFinished = false
                 }
 
+                if (data.settings == null) {
+                    data.settings = {}
+                }
+
+                if (data.settings.increaseRodsKey == null) {
+                    data.settings.increaseRodsKey = "s"
+                }
+
+                if (data.settings.decreaseRodsKey == null) {
+                    data.settings.decreaseRodsKey = "w"
+                }
+
+                if (data.settings.changeByRods == null) {
+                    data.settings.changeByRods = 1
+                }
+
+                if (data.settings.increaseTurbinesKey == null) {
+                    data.settings.increaseTurbinesKey = "e"
+                }
+
+                if (data.settings.decreaseTurbinesKey == null) {
+                    data.settings.decreaseTurbinesKey = "d"
+                }
+
+                if (data.settings.changeByTurbines == null) {
+                    data.settings.changeByTurbines = 1
+                }
+
+                if (data.settings.activateECSKey == null) {
+                    data.settings.activateECSKey = "r"
+                }
+
+                if (data.settings.activateEPRSKey == null) {
+                    data.settings.activateEPRSKey = "f"
+                }
+
+                if (data.settings.activateSCRAMKey == null) {
+                    data.settings.activateSCRAMKey = "a"
+                }
+
                 if (!data.tutorialFinished) {
                     startTutorial()
                 }
@@ -1277,6 +1500,14 @@
                     startupTimerShow.forEach(text => {
                         text.style.visibility = "hidden";
                     });
+                }
+
+                if (!data.ECS1Bought) {
+                    activateECSB2.setAttribute("hidden", "hidden");
+                }
+
+                if (!data.EPRS1Bought) {
+                    activateEPRSB2.setAttribute("hidden", "hidden");
                 }
 
                 if (!data.ECSAvailable) {
@@ -1353,8 +1584,148 @@
                     }
                 }
 
+                increaseRodsKeyI.addEventListener("paste", e => {e.preventDefault});
+                increaseRodsKeyI.addEventListener("drop", e => {e.preventDefault});
+                increaseRodsKeyI.value = data.settings.increaseRodsKey;
+                increaseRodsKeyI.addEventListener("keydown", e => {
+                    e.preventDefault()
+                    if (!forbiddenKeybinds.includes(e.key) && !Object.values(data.settings).includes(e.key)) {
+                        increaseRodsKeyI.value = e.key.toLowerCase()
+                        data.settings.increaseRodsKey = e.key.toLowerCase()
+                    }
+                    save()
+                })
+
+                decreaseRodsKeyI.addEventListener("paste", e => {e.preventDefault});
+                decreaseRodsKeyI.addEventListener("drop", e => {e.preventDefault});
+                decreaseRodsKeyI.value = data.settings.decreaseRodsKey;
+                decreaseRodsKeyI.addEventListener("keydown", e => {
+                    e.preventDefault()
+                    if (!forbiddenKeybinds.includes(e.key) && !Object.values(data.settings).includes(e.key)) {
+                        decreaseRodsKeyI.value = e.key.toLowerCase()
+                        data.settings.decreaseRodsKey = e.key.toLowerCase()
+                    }
+                    save()
+                })
+
+                changeByRodsI.value = data.settings.changeByRods
+                changeByRodsI.addEventListener("input", e => {
+                    let changeByRodsDummy = Math.round(changeByRodsI.value)
+                    if (changeByRodsDummy >= 1 && changeByRodsDummy <= 100) {
+                        data.settings.changeByRods = changeByRodsDummy
+                    } else if (changeByRodsDummy > 100) {
+                        data.settings.changeByRods = 100
+                        changeByRodsI.value = 100
+                    } else {
+                        data.settings.changeByRods = 1
+                        changeByRodsI.value = 1
+                    }
+                    save()
+                })
+
+                increaseTurbinesKeyI.addEventListener("paste", e => {e.preventDefault});
+                increaseTurbinesKeyI.addEventListener("drop", e => {e.preventDefault});
+                increaseTurbinesKeyI.value = data.settings.increaseTurbinesKey;
+                increaseTurbinesKeyI.addEventListener("keydown", e => {
+                    e.preventDefault()
+                    if (!forbiddenKeybinds.includes(e.key) && !Object.values(data.settings).includes(e.key)) {
+                        increaseTurbinesKeyI.value = e.key.toLowerCase()
+                        data.settings.increaseTurbinesKey = e.key.toLowerCase()
+                    }
+                    save()
+                })
+
+                decreaseTurbinesKeyI.addEventListener("paste", e => {e.preventDefault});
+                decreaseTurbinesKeyI.addEventListener("drop", e => {e.preventDefault});
+                decreaseTurbinesKeyI.value = data.settings.decreaseTurbinesKey;
+                decreaseTurbinesKeyI.addEventListener("keydown", e => {
+                    e.preventDefault()
+                    if (!forbiddenKeybinds.includes(e.key) && !Object.values(data.settings).includes(e.key)) {
+                        decreaseTurbinesKeyI.value = e.key.toLowerCase()
+                        data.settings.decreaseTurbinesKey = e.key.toLowerCase()
+                    }
+                    save()
+                })
+
+                changeByTurbinesI.value = data.settings.changeByTurbines
+                changeByTurbinesI.addEventListener("input", e => {
+                    let changeByTurbinesDummy = Math.round(changeByTurbinesI.value)
+                    if (changeByTurbinesDummy >= 1 && changeByTurbinesDummy <= 100) {
+                        data.settings.changeByTurbines = changeByTurbinesDummy
+                    } else if (changeByTurbinesDummy > 100) {
+                        data.settings.changeByTurbines = 100
+                        changeByTurbinesI.value = 100
+                    } else {
+                        data.settings.changeByTurbines = 1
+                        changeByTurbinesI.value = 1
+                    }
+                    save()
+                })
+
+                activateECSKeyI.addEventListener("paste", e => {e.preventDefault});
+                activateECSKeyI.addEventListener("drop", e => {e.preventDefault});
+                activateECSKeyI.value = data.settings.activateECSKey;
+                activateECSKeyI.addEventListener("keydown", e => {
+                    e.preventDefault()
+                    if (!forbiddenKeybinds.includes(e.key) && !Object.values(data.settings).includes(e.key)) {
+                        activateECSKeyI.value = e.key.toLowerCase()
+                        data.settings.activateECSKey = e.key.toLowerCase()
+                    }
+                    save()
+                })
+
+                activateEPRSKeyI.addEventListener("paste", e => {e.preventDefault});
+                activateEPRSKeyI.addEventListener("drop", e => {e.preventDefault});
+                activateEPRSKeyI.value = data.settings.activateEPRSKey;
+                activateEPRSKeyI.addEventListener("keydown", e => {
+                    e.preventDefault()
+                    if (!forbiddenKeybinds.includes(e.key) && !Object.values(data.settings).includes(e.key)) {
+                        activateEPRSKeyI.value = e.key.toLowerCase()
+                        data.settings.activateEPRSKey = e.key.toLowerCase()
+                    }
+                    save()
+                })
+
+                activateSCRAMKeyI.addEventListener("paste", e => {e.preventDefault});
+                activateSCRAMKeyI.addEventListener("drop", e => {e.preventDefault});
+                activateSCRAMKeyI.value = data.settings.activateSCRAMKey;
+                activateSCRAMKeyI.addEventListener("keydown", e => {
+                    e.preventDefault()
+                    if (!forbiddenKeybinds.includes(e.key) && !Object.values(data.settings).includes(e.key)) {
+                        activateSCRAMKeyI.value = e.key.toLowerCase()
+                        data.settings.activateSCRAMKey = e.key.toLowerCase()
+                    }
+                    save()
+                })
+
+                window.addEventListener("keydown", e => {
+                    if (!settingsOpened) {
+                        if (e.key == data.settings.increaseRodsKey) {
+                            increaseRodsByKey()
+                        } else if (e.key == data.settings.decreaseRodsKey) {
+                            decreaseRodsByKey()
+                        } else if (e.key == data.settings.increaseTurbinesKey) {
+                            increaseTurbinesByKey()
+                        } else if (e.key == data.settings.decreaseTurbinesKey) {
+                            decreaseTurbinesByKey()
+                        } else if (e.key == data.settings.activateECSKey) {
+                            activateECS()
+                        } else if (e.key == data.settings.activateEPRSKey) {
+                            activateEPRS()
+                        } else if (e.key == data.settings.activateSCRAMKey) {
+                            if (data.SCRAMBought) {
+                                if (confirm("Are you sure you want to activate SCRAM?")) {
+                                    activateSCRAM()
+                                }
+                            }
+                        }
+                    }
+                })
+
                 mainloopID = setInterval(mainloop, 1000)
-                console.table(data);
+                let dataWithoutSettings = structuredClone(data);
+                delete dataWithoutSettings.settings
+                console.table(dataWithoutSettings);
                 render()
                 save()
                 console.log("Init ended")
