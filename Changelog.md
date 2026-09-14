@@ -12,8 +12,13 @@ Changelog started at 13-5-2026
 - [x] Quick tutorial
 - [x] Dark mode support
 - [x] SCRAM upgrade (for in the shop)
-- [ ] Add keyboard control<br>
+- [x] Add keyboard control<br>
 If you have any ideas, post them as an issue!
+
+## Keyboard control (September 14th 2026): big update
+- Added the settings
+- Added keyboard control
+- Updated the manuals
 
 ## Bug fixes (September 3rd 2026): bug fixes
 - There was a bug about the data object when a user would open for the first time
