@@ -21,7 +21,8 @@ This is a backup system that needs to be purchased in the shop. To buy for examp
 | EPRS level 3  | 500  | 26.3 bar                        | 105.2 bar                 |
 ### SCRAM
 The SCRAM button is the emergency shutdown and can be purchased in the shop for 1000 coins. **Note that <ins>EVERY TIME YOU USE THE SCRAM</ins> you pay 200 coins, <ins>if you don't have 200 coins, you can't use the SCRAM</ins>**. The SCRAM immediatly shutsdown the reactor, but locks the rods at 100% and the turbines and at 0%. After having used the SCRAM, you can restart the reactor. This takes 30 minutes, this is why the SCRAM should only be used in case of absolute emergency.
-
+### Keyboard control
+You can set keybinds in the settings for the controls. to do this, click the settings icon in the top right corner a box. Next, hit the key you want to set for the keybind. You can't use a keybind twice. Further, there are a couple of keys you can't use for keybinds (Enter, Backspace, Delete, etc.)
 ## Error panel
 The error panel is a usefull item in the simulator that shows you when things are getting dangerous. The meaning of each error can be seen in the list undernead.
 ### OVERHEAT
