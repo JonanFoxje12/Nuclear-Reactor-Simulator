@@ -12,7 +12,8 @@ Changelog started at 13-5-2026
 - [x] Quick tutorial
 - [x] Dark mode support
 - [x] SCRAM upgrade (for in the shop)
-- [x] Add keyboard control<br>
+- [x] Add keyboard control
+- [ ] Add infrastructure upgrades (higher secure temperatures)<br>
 If you have any ideas, post them as an issue!
 
 ## Keyboard control (September 14th 2026): big update
