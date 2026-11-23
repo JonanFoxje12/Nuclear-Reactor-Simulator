@@ -60,5 +60,9 @@ How to: rods to 0%, turbines to 100% and activate the emergency systems.
 Reason: the reactor temperature climbed above 2000°C or the pressure climbed to above 250 bar. The reactor is gone.
 What you should do: close and reopen the page and re-begin playing the game, all your progress is gone.
 ## Other
+### Save files
+Save files can be downloaded and imported in the settings.<br>
+A save file expires after 15 minutes. An expired save file cannot be imported anymore.<br>
+Save files are meant for transfering data, not for a backup.
 ### Coins
 Coins can be spent in the shop. They are obtained when power is generated.
