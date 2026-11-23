@@ -16,6 +16,11 @@ Changelog started at 13-5-2026
 - [ ] Add infrastructure upgrades (higher secure temperatures)<br>
 If you have any ideas, post them as an issue!
 
+## Save files and temp unit choise (November 23th 2026): small change
+- Added temperature unit choise menu in the settings.
+- Added save files for data transfering
+- Updated the manual
+
 ## Keyboard control (September 14th 2026): big update
 - Added the settings
 - Added keyboard control
